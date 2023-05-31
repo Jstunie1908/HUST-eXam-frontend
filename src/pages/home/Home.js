@@ -1,77 +1,79 @@
 import * as React from "react";
-import CardContainer from "../../components/card/CardContainer";
+// import CardContainer from "../../components/card/CardContainer";
 import styles from "./Home.module.css";
 import Header from "../../components/common/header/Header";
 import Cookies from "js-cookie";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 
+
+const CardContainer = React.lazy(() => import("./../../components/card/CardContainer.js"));
 export default function Home() {
   //Memo
-  const cards = React.useMemo(() => {
-    return [
-      {
-        id: 1,
-        imgUrl:
-          "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
-        name: "Exam 1",
-        idExam: "IT4272",
-        startDate: "25/04/2023 - 07:00:00",
-        endDate: "25/04/2023 - 07:00:00",
-        status: "public",
-      },
-      {
-        id: 2,
-        imgUrl:
-          "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
-        name: "abc",
-        idExam: "IT4272",
-        startDate: "25/04/2023 - 07:00:00",
-        endDate: "25/04/2023 - 07:00:00",
-        status: "public",
-      },
-      {
-        id: 3,
-        imgUrl:
-          "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
-        name: "Exam 3",
-        idExam: "IT4272",
-        startDate: "25/04/2023 - 07:00:00",
-        endDate: "25/04/2023 - 07:00:00",
-        status: "public",
-      },
-      {
-        id: 4,
-        imgUrl:
-          "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
-        name: "Exam 4",
-        idExam: "IT4272",
-        startDate: "25/04/2023 - 07:00:00",
-        endDate: "25/04/2023 - 07:00:00",
-        status: "public",
-      },
-      {
-        id: 5,
-        imgUrl:
-          "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
-        name: "Exam 5",
-        idExam: "IT4272",
-        startDate: "25/04/2023 - 07:00:00",
-        endDate: "25/04/2023 - 07:00:00",
-        status: "public",
-      },
-      {
-        id: 6,
-        imgUrl:
-          "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
-        name: "Exam 6",
-        idExam: "IT4272",
-        startDate: "25/04/2023 - 07:00:00",
-        endDate: "25/04/2023 - 07:00:00",
-        status: "public",
-      },
-    ];
-  }, []);
+  // const cards = React.useMemo(() => {
+  //   return [
+  //     {
+  //       id: 1,
+  //       imgUrl:
+  //         "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
+  //       name: "Exam 1",
+  //       idExam: "IT4272",
+  //       startDate: "25/04/2023 - 07:00:00",
+  //       endDate: "25/04/2023 - 07:00:00",
+  //       status: "public",
+  //     },
+  //     {
+  //       id: 2,
+  //       imgUrl:
+  //         "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
+  //       name: "abc",
+  //       idExam: "IT4272",
+  //       startDate: "25/04/2023 - 07:00:00",
+  //       endDate: "25/04/2023 - 07:00:00",
+  //       status: "public",
+  //     },
+  //     {
+  //       id: 3,
+  //       imgUrl:
+  //         "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
+  //       name: "Exam 3",
+  //       idExam: "IT4272",
+  //       startDate: "25/04/2023 - 07:00:00",
+  //       endDate: "25/04/2023 - 07:00:00",
+  //       status: "public",
+  //     },
+  //     {
+  //       id: 4,
+  //       imgUrl:
+  //         "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
+  //       name: "Exam 4",
+  //       idExam: "IT4272",
+  //       startDate: "25/04/2023 - 07:00:00",
+  //       endDate: "25/04/2023 - 07:00:00",
+  //       status: "public",
+  //     },
+  //     {
+  //       id: 5,
+  //       imgUrl:
+  //         "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
+  //       name: "Exam 5",
+  //       idExam: "IT4272",
+  //       startDate: "25/04/2023 - 07:00:00",
+  //       endDate: "25/04/2023 - 07:00:00",
+  //       status: "public",
+  //     },
+  //     {
+  //       id: 6,
+  //       imgUrl:
+  //         "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
+  //       name: "Exam 6",
+  //       idExam: "IT4272",
+  //       startDate: "25/04/2023 - 07:00:00",
+  //       endDate: "25/04/2023 - 07:00:00",
+  //       status: "public",
+  //     },
+  //   ];
+  // }, []);
 
   function handleTime(datetime) {
     const date = new Date(datetime);
@@ -117,7 +119,7 @@ export default function Home() {
 
   //EVENT SEARCH
   const handleSearch = (text) => {
-    setCardList(cards.filter((e) => e.name.includes(text)));
+    setCardList(cardList.filter((e) => e.name.includes(text)));
   };
 
   const isLogin = (Cookies.get('isLogin') === 'true');
@@ -140,16 +142,18 @@ export default function Home() {
                 {cardList.map((card, id) => {
                   return (
                     <div className="mt-3" key={id}>
-                      <CardContainer
-                        imgUrl={card.imgUrl}
-                        name={card.name}
-                        idExam={card.id}
-                        startDate={card.startDate}
-                        endDate={card.endDate}
-                        status={card.status}
-                        key={card.name + id}
-                        isOpen={card.isOpen}
-                      />
+                      <React.Suspense fallback = {<div>Loading...</div>}>
+                        <CardContainer
+                          imgUrl={card.imgUrl}
+                          name={card.name}
+                          idExam={card.id}
+                          startDate={card.startDate}
+                          endDate={card.endDate}
+                          status={card.status}
+                          key={card.name + id}
+                          isOpen={card.isOpen}
+                        />
+                      </React.Suspense>
                     </div>
                   );
                 })}
