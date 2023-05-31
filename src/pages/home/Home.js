@@ -4,6 +4,7 @@ import styles from "./Home.module.css";
 import Header from "../../components/common/header/Header";
 import Cookies from "js-cookie";
 import { Navigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Home() {
   //Memo
@@ -72,14 +73,47 @@ export default function Home() {
     ];
   }, []);
 
+  function handleTime(datetime) {
+    const date = new Date(datetime);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const hour = date.getHours().toString().padStart(2, "0");
+    const minute = date.getMinutes().toString().padStart(2, "0");
+    const second = date.getSeconds().toString().padStart(2, "0");
+    const formattedDate = `${day}/${month}/${year} - ${hour}:${minute}:${second}`;
+    return formattedDate;
+  }
+
   //STATE
   const [searchText, setSearchText] = React.useState("");
   const [cardList, setCardList] = React.useState([]);
 
   //EFFECT
-  React.useLayoutEffect(() => {
-    setCardList(cards);
-  }, [cards]);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get("http://localhost:8001/api/exams/public");
+      const exams = res.data.exams;
+      const listExams = exams.map((e) => {
+        return {
+          id: e.id,
+          imgUrl:
+            "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
+          name: e.title,
+          startDate: handleTime(e.start_time),
+          endDate: handleTime(e.end_time),
+          status: e.state,
+          isOpen: e.is_open,
+        };
+      });
+      console.log(exams);
+      setCardList(listExams);
+    };
+    fetchData();
+  }, []);
+  // React.useLayoutEffect(() => {
+  //   setCardList(cards);
+  // }, [cards]);
 
   //EVENT SEARCH
   const handleSearch = (text) => {
@@ -109,11 +143,12 @@ export default function Home() {
                       <CardContainer
                         imgUrl={card.imgUrl}
                         name={card.name}
-                        idExam={card.idExam}
+                        idExam={card.id}
                         startDate={card.startDate}
                         endDate={card.endDate}
                         status={card.status}
                         key={card.name + id}
+                        isOpen={card.isOpen}
                       />
                     </div>
                   );

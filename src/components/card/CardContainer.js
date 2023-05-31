@@ -48,7 +48,13 @@ export default function CardContainer(props) {
 
   return (
     <div>
-      <Card sx={{ display: "flex", borderRadius: "16px" }}>
+      <Card
+        sx={{
+          display: "flex",
+          borderRadius: "16px",
+          border: "1px solid black",
+        }}
+      >
         <CardMedia
           component="img"
           sx={{ width: 250 }}
