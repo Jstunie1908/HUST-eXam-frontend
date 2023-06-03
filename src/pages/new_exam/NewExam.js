@@ -211,7 +211,7 @@ export default function NewExam() {
                                             <Grid item xs={11}>
                                                 <TextField
                                                     required
-                                                    type="text"
+                                                    type="password"
                                                     id="password"
                                                     value={passwordExam}
                                                     variant="outlined"
