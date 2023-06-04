@@ -108,7 +108,7 @@ export default function Home() {
           isOpen: e.is_open,
         };
       });
-      console.log(exams);
+      // console.log(exams);
       setCardList(listExams);
     };
     fetchData();
@@ -142,7 +142,7 @@ export default function Home() {
                 {cardList.map((card, id) => {
                   return (
                     <div className="mt-3" key={id}>
-                      <React.Suspense fallback = {<div>Loading...</div>}>
+                      <React.Suspense fallback={<div>Loading...</div>}>
                         <CardContainer
                           imgUrl={card.imgUrl}
                           name={card.name}

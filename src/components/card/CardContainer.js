@@ -129,6 +129,15 @@ export default function CardContainer(props) {
                 Status : {props.status}
               </Typography>
             )}
+            {props.author && (
+              <Typography
+                variant="subtitle1"
+                color="text.secondary"
+                component="div"
+              >
+                Author : {props.author}
+              </Typography>
+            )}
             {props.isOpen === 1 ? (
               <Typography variant="subtitle1" color="text.secondary" component="div">
                 <span style={{ color: 'green' }}>Open</span>

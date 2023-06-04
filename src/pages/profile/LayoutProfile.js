@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 import EmailIcon from '@mui/icons-material/Email';
 import BadgeIcon from '@mui/icons-material/Badge';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -9,11 +9,14 @@ import StarIcon from '@mui/icons-material/Star';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import CreateIcon from '@mui/icons-material/Create';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
 export default function LayoutProfile() {
+    // Lấy id
+    const id = Cookies.get('id');
     // Lấy token
     const token = Cookies.get('token')
     // Thông tin của user
@@ -24,6 +27,13 @@ export default function LayoutProfile() {
     const [role, setRole] = useState("");
     const [rank, setRank] = useState("");
     const [createdAt, setCreatedAt] = useState("");
+    // Thay đổi phone, gender
+    const [openChangePhone, setOpenChangePhone] = useState(false);
+    const [openChangeGender, setOpenChangeGender] = useState(false);
+    // Thay đổi canSave
+    const [canSave, setCanSave] = useState(false);
+    // openDialog
+    const [openDialog, setOpenDialog] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -51,11 +61,62 @@ export default function LayoutProfile() {
         fetchData();
     }, [token]);
 
-    //Thay đổi phone
-    const [openChangePhone, SetOpenChangePhone] = useState(false);
-
     const handleClickChangePhone = () => {
-        SetOpenChangePhone(!openChangePhone);
+        // Thay đổi trạng thái nút Save
+        if (openChangePhone === false) {
+            setCanSave(true);
+        }
+        setOpenChangePhone(!openChangePhone);
+    }
+    const handleClickChangeGender = () => {
+        // Thay đổi trạng thái nút Save
+        if (openChangeGender === false) {
+            setCanSave(true);
+        }
+        setOpenChangeGender(!openChangeGender);
+        setGender(gender === "male" ? "female" : "male");
+
+    }
+    // Xử lý khi click save
+    const handleClickSave = (event) => {
+        event.preventDefault();
+        const regex = /^[0-9]+$/; // Biểu thức chính quy kiểm tra chữ số
+        if (!regex.test(phone)) {
+            toast.info("The phone number should only consist of digits!", { autoClose: 1000 });
+            return;
+        }
+        // Đóng việc change phone, change gender
+        setOpenChangePhone(false);
+        setOpenChangeGender(false);
+        // Hiển thị Dialog xác nhận
+        handleOpenDialog()
+    }
+    // Xử lý dialog
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+    const handleCloseDialog = async (choice) => {
+        setOpenDialog(false);
+        if (choice === "Yes") {
+            try {
+                const url = `http://localhost:8001/api/user/${id}/update`;
+                const data = {
+                    phone: phone,
+                    gender: gender,
+                };
+                const headers = { 'Authorization': `Bearer ${token}` };
+                const response = await axios.put(
+                    url,
+                    data,
+                    { headers }
+                );
+                // console.log(response);
+                toast.success(response.data.message, { autoClose: 1000 });
+            } catch (error) {
+                toast.error("An error occurred while connecting to the server", { autoClose: 500 })
+                // console.log(error);
+            }
+        }
     }
 
     return (
@@ -131,7 +192,7 @@ export default function LayoutProfile() {
                     </Grid>
                     <Grid item sx={{ paddingRight: '20px' }} xs={1}>
                         <IconButton onClick={handleClickChangePhone} className="icon-button">
-                            {openChangePhone ? <BorderColorIcon /> : <CreateIcon />}
+                            {openChangePhone ? <BorderColorIcon style={{ color: 'dodgerblue' }} /> : <CreateIcon />}
                         </IconButton>
                     </Grid>
                 </Grid>
@@ -154,6 +215,11 @@ export default function LayoutProfile() {
                             value={gender}
                             sx={{ width: "100%" }}
                         />
+                    </Grid>
+                    <Grid item sx={{ paddingRight: '20px' }} xs={1}>
+                        <IconButton onClick={handleClickChangeGender} className="icon-button">
+                            {openChangeGender ? <SwapHorizIcon style={{ color: "dodgerblue" }} /> : <SwapHorizIcon />}
+                        </IconButton>
                     </Grid>
                 </Grid>
                 {/* Role */}
@@ -219,7 +285,31 @@ export default function LayoutProfile() {
                         />
                     </Grid>
                 </Grid>
+                {/* Save Button */}
+                <Grid container sx={{ paddingLeft: '20px', paddingTop: '20px' }}>
+                    <Button
+                        className="icon-button"
+                        variant="contained"
+                        onClick={(event) => handleClickSave(event)}
+                        title="Click to save"
+                        disabled={canSave === true ? false : true}
+                    >
+                        Save
+                    </Button>
+                </Grid>
             </Grid>
+            <Dialog open={openDialog} onClose={() => handleCloseDialog("")} disableEscapeKeyDown={true}>
+                <DialogTitle>Confirm</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Confirm change information
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => handleCloseDialog("Yes")} className="icon-button">Yes</Button>
+                    <Button onClick={() => handleCloseDialog("No")} className="icon-button">No</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

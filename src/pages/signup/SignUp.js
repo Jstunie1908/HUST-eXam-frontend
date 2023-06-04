@@ -300,8 +300,8 @@ export default function SignUp() {
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => handleCloseDialog("Yes")}>Yes</Button>
-                            <Button onClick={() => handleCloseDialog("No")}>No</Button>
+                            <Button onClick={() => handleCloseDialog("Yes")} className="icon-button">Yes</Button>
+                            <Button onClick={() => handleCloseDialog("No")} className="icon-button">No</Button>
                         </DialogActions>
                     </Dialog>
                 </Container>

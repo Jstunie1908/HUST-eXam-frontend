@@ -76,6 +76,7 @@ export default function ListExams() {
                                                 status={exam.state}
                                                 key={exam.title + exam.id}
                                                 isOpen={exam.is_open}
+                                                author={exam.author}
                                             />
                                         </div>
                                     ))}

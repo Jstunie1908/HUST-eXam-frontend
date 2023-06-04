@@ -3,6 +3,8 @@ import Header from "../header/Header"
 import { Box, Button, Grid, Paper } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 export default function Exam(props) {
     const id = props.id;
@@ -25,7 +27,15 @@ export default function Exam(props) {
 
     const handleClickStartExam = () => {
         navigate(`/list_exams/exam/start/${id}`);
+    }
 
+    const handleClickEditExam = () => {
+        if (parseInt(Cookies.get('id')) !== parseInt(exam.author)) {
+            toast.info("You do not have permission to edit this exam", { autoClose: 3000 });
+        }
+        else {
+            toast.info("OK", { autoClose: 3000 });
+        }
     }
 
     function handleTime(datetime) {
@@ -62,19 +72,26 @@ export default function Exam(props) {
                             <div className="header font-weight-bold font h6" style={{ color: "black" }}>Max score : <span>{exam.max_score}</span></div>
                             <div className="header font-weight-bold font h6" style={{ color: "black" }}>Number question : <span>{exam.number_of_question}</span></div>
                             <div className="header font-weight-bold font h6" style={{ color: "black" }}>State : <span>{exam.state}</span></div>
+                            <div className="header font-weight-bold font h6" style={{ color: "black" }}>Author : <span>{exam.author}</span></div>
                         </Box>
                         {/* Các button như Start the exam, Edit the exam */}
                         <Box sx={{ paddingTop: '20px', marginLeft: '20px', paddingBottom: '20px' }}>
                             <Grid container spacing={3}>
                                 <Grid item>
-                                    <Button variant="contained"
+                                    <Button
+                                        variant="contained"
                                         className="icon-button"
-                                        onClick={handleClickStartExam}>
+                                        onClick={handleClickStartExam}
+                                    >
                                         Start the exam
                                     </Button>
                                 </Grid>
                                 <Grid item>
-                                    <Button variant="contained" className="icon-button">
+                                    <Button
+                                        variant="contained"
+                                        className="icon-button"
+                                        onClick={handleClickEditExam}
+                                    >
                                         Edit the exam
                                     </Button>
                                 </Grid>
