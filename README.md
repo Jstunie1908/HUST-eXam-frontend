@@ -28,6 +28,8 @@ Xem thông tin tổng quát của bài thi
 Ấn "Start the exam" để thi, sau đó bắt đầu làm bài thi và submit, lưu điểm lại trong CSDL
 <h4>Xem, chỉnh sửa Profile người dùng</h4>
 Xem thông tin và chỉnh sửa thông tin người dùng
+<h4>Chỉnh sửa thông tin account(password) </h4>
+Chỉnh sửa mật khẩu người dùng
 <h4>Tạo bài thi (rỗng) </h4>
 Tạo bài thi chưa có câu hỏi, chỉ bao gồm các thông tin tổng quát
 
