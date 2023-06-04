@@ -1,6 +1,7 @@
 import * as React from "react";
 // import CardContainer from "../../components/card/CardContainer";
 import styles from "./Home.module.css";
+import { Box, Pagination } from "@mui/material";
 import Header from "../../components/common/header/Header";
 import Cookies from "js-cookie";
 import { Navigate } from "react-router-dom";
@@ -90,6 +91,12 @@ export default function Home() {
   //STATE
   const [searchText, setSearchText] = React.useState("");
   const [cardList, setCardList] = React.useState([]);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const examsPerPage = 5;
+  const startIndex = (currentPage - 1) * examsPerPage;
+  const endIndex = startIndex + examsPerPage;
+  // Lấy danh sách bài thi trong trang hiện tại
+  const currentExams = cardList.slice(startIndex, endIndex);
 
   //EFFECT
   React.useEffect(() => {
@@ -138,8 +145,11 @@ export default function Home() {
             <div className="row">
               {/* Hiển thị danh sách các bài thi đã tham gia */}
               <div className="col-7">
-                <div className="header font-weight-bold font h2" style={{ color: "white" }}>List of public exams</div>
-                {cardList.map((card, id) => {
+                <Box>
+                  <div className="header font-weight-bold font h2" style={{ color: "black" }}>List of public exams</div>
+                </Box>
+                <Box>
+                {currentExams.map((card, id) => {
                   return (
                     <div className="mt-3" key={id}>
                       <React.Suspense fallback={<div>Loading...</div>}>
@@ -157,6 +167,12 @@ export default function Home() {
                     </div>
                   );
                 })}
+                <Pagination
+                  count={Math.ceil(cardList.length / examsPerPage)}
+                  page={currentPage}
+                  onChange={(event, value) => setCurrentPage(value)}
+                />
+                </Box>
               </div>
               {/* Tìm kiếm khóa học */}
               <div className="col-5">

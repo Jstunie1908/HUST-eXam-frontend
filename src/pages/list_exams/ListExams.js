@@ -62,7 +62,7 @@ export default function ListExams() {
                             {/* Hiển thị danh sách tất cả bài thi trong hệ thống */}
                             <div className="col-7">
                                 <Box>
-                                    <div className="header font-weight-bold font h2" style={{ color: "white" }}>List of all exams</div>
+                                    <div className="header font-weight-bold font h2" style={{ color: "black" }}>List of all exams</div>
                                 </Box>
                                 <Box>
                                     {currentExams.map((exam) => (
