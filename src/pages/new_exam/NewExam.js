@@ -82,8 +82,15 @@ export default function NewExam(props) {
         }
         console.log(dataSendToServer);
         try {
-            const response = await axios.post("http://localhost:8001/api/exam", dataSendToServer);
-            toast.success(response.data.message, { autoClose: 1000 });
+            // Thieu api update exam
+            if(!props.edit){
+                const response = await axios.post("http://localhost:8001/api/exam", dataSendToServer);
+                toast.success(response.data.message, { autoClose: 1000 });
+            }else{
+
+                // write api update exam
+                toast.success("update exam", {autoClose:1000})
+            }
             setTitleExam("");
             setStartTimeConvert("");
             setEndTimeCovert("");
