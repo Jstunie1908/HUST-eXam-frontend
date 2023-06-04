@@ -3,7 +3,7 @@ import CardContainer from "../../components/card/CardContainer";
 import styles from "../home/Home.module.css";
 import { useTheme, ThemeProvider } from "@emotion/react";
 
-export default function ResultExams() {
+export default function LayoutResultExams() {
   const theme = useTheme();
   //Memo
   const cards = React.useMemo(() => {

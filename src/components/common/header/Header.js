@@ -17,7 +17,7 @@ import { useDispatch } from "react-redux";
 import { changeStateIsLogin, resetToken } from "../../../pages/login/loginSlice";
 
 const pages = ["Home", "List exams", "Create exam"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = ["Profile", "Logout"];
 
 function Header(props) {
   // props.page

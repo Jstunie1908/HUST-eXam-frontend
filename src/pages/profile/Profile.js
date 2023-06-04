@@ -3,7 +3,8 @@ import Header from "../../components/common/header/Header";
 import { Box, Paper, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import LayoutProfile from "./LayoutProfile";
-import ResultExams from "../result_exams/ResultExams";
+import LayoutResultExams from "./LayoutResultExams";
+import LayoutAccount from "./LayoutAccount";
 import Cookies from "js-cookie";
 import { Navigate } from "react-router-dom";
 
@@ -30,14 +31,18 @@ export default function Profile() {
                 <Box sx={{ borderBottom: 1 }}>
                   <TabList onChange={handleChange}>
                     <Tab label="Profile" className="icon-button" value="1" />
-                    <Tab label="Exam results" className="icon-button" value="2" />
+                    <Tab label="Account" className="icon-button" value="2" />
+                    <Tab label="Exam results" className="icon-button" value="3" />
                   </TabList>
                 </Box>
                 <TabPanel value="1">
                   <LayoutProfile />
                 </TabPanel>
                 <TabPanel value="2">
-                  <ResultExams />
+                  <LayoutAccount />
+                </TabPanel>
+                <TabPanel value="3">
+                  <LayoutResultExams />
                 </TabPanel>
               </TabContext>
             </Box>
