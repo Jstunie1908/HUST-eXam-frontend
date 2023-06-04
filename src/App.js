@@ -13,6 +13,7 @@ import Exam from "./components/common/exam/Exam";
 import ExamContent from "./components/common/exam/ExamContent";
 import Cookies from "js-cookie";
 import NewExam from "./pages/new_exam/NewExam";
+import EditExam from "./pages/edit_exam/EditExam";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/list_exams/exam/:id" element={<ExamWrapper />} />
           <Route path="/list_exams/exam/start/:id" element={<ExamContentWrapper />} />
+          <Route path="/exam/edit/:id" element={<EditExam />} />
           <Route path="*" element={(Cookies.get('isLogin') === 'true') ? <Navigate replace to="/home" /> : <Navigate replace to="/" />} />
         </Routes>
       </BrowserRouter>

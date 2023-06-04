@@ -13,25 +13,32 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 
-export default function NewExam() {
+export default function NewExam(props) {
     const isLogin = (Cookies.get('isLogin') === 'true');
     const id = Cookies.get('id');
-    const [titleExam, setTitleExam] = useState("");
+    const [titleExam, setTitleExam] = useState(!props.edit ?"" : props.edit.title);
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [startTimeConvert, setStartTimeConvert] = useState("");
     const [endTimeConvert, setEndTimeCovert] = useState("");
-    const [isOpen, setIsOpen] = useState("false");
-    const [state, setState] = useState("public");
-    const [passwordExam, setPasswordExam] = useState("");
+    const [isOpen, setIsOpen] = useState(props.edit && !props.edit.isOpen ? "false": "true");
+    const [state, setState] = useState(props.edit && props.edit.state ==="private" ? "private" : "public");
+    const [passwordExam, setPasswordExam] = useState(props.edit && props.edit.passwword ?props.edit.password:"");
 
+    console.log(props.edit.title)
+    useEffect(() => {
+        setTitleExam(!props.edit ?"" : props.edit.title)
+        setIsOpen(props.edit && !props.edit.isOpen ? "false": "true")
+        setState(props.edit && props.edit.state ==="private" ? "private" : "public")
+        setPasswordExam(props.edit && props.edit.passwword ?props.edit.password:"")
+    }, [props.edit])
     useEffect(() => {
         setStartTimeConvert(startTime && dayjs(startTime).format('YYYY/MM/DD HH:mm:ss'));
         setEndTimeCovert(endTime && dayjs(endTime).format('YYYY/MM/DD HH:mm:ss'));
     }, [startTime, endTime])
 
     function compareTime(startTime, endTime) {
-        const startDate = new Date(startTime);
+        const startDate = new Date( );
         const endDate = new Date(endTime);
 
         return startDate.getTime() < endDate.getTime();
@@ -232,7 +239,7 @@ export default function NewExam() {
                                 className="icon-button"
                                 onClick={handleClickCreateExam}
                             >
-                                Create new exam
+                                {!props.edit? "Create new exam": "Save Exam"}
                             </Button>
                         </Grid>
                     </Grid>

@@ -34,7 +34,8 @@ export default function Exam(props) {
             toast.info("You do not have permission to edit this exam", { autoClose: 3000 });
         }
         else {
-            toast.info("OK", { autoClose: 3000 });
+            navigate(`/exam/edit/${id}`)
+            // toast.info("OK", { autoClose: 3000 });
         }
     }
 
