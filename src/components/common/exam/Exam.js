@@ -30,6 +30,7 @@ export default function Exam(props) {
     }
 
     const handleClickEditExam = () => {
+        // Có thể bỏ qua đoạn này vì khi iduser khác exam.author thì đã không hiển thị nút edit
         if (parseInt(Cookies.get('id')) !== parseInt(exam.author)) {
             toast.info("You do not have permission to edit this exam", { autoClose: 3000 });
         }
@@ -86,7 +87,7 @@ export default function Exam(props) {
                                         Start the exam
                                     </Button>
                                 </Grid>
-                                <Grid item>
+                                <Grid item sx={{ display: `${parseInt(Cookies.get('id')) !== parseInt(exam.author) ? "none" : "flex"}` }}>
                                     <Button
                                         variant="contained"
                                         className="icon-button"

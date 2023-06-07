@@ -91,6 +91,7 @@ export default function Home() {
   //STATE
   const [searchText, setSearchText] = React.useState("");
   const [cardList, setCardList] = React.useState([]);
+  const [cardListReal, setCardListReal] = React.useState([]);
   const [currentPage, setCurrentPage] = React.useState(1);
   const examsPerPage = 5;
   const startIndex = (currentPage - 1) * examsPerPage;
@@ -98,11 +99,18 @@ export default function Home() {
   // Lấy danh sách bài thi trong trang hiện tại
   const currentExams = cardList.slice(startIndex, endIndex);
 
+  React.useEffect(() => {
+    if (searchText === "") {
+      setCardList(cardListReal);
+    }
+  }, [searchText, cardListReal])
+
   //EFFECT
   React.useEffect(() => {
     const fetchData = async () => {
       const res = await axios.get("http://localhost:8001/api/exams/public");
       const exams = res.data.exams;
+      // console.log("exams:", exams)
       const listExams = exams.map((e) => {
         return {
           id: e.id,
@@ -113,20 +121,19 @@ export default function Home() {
           endDate: handleTime(e.end_time),
           status: e.state,
           isOpen: e.is_open,
+          author: e.author,
         };
       });
       // console.log(exams);
       setCardList(listExams);
+      setCardListReal(listExams);
     };
     fetchData();
   }, []);
-  // React.useLayoutEffect(() => {
-  //   setCardList(cards);
-  // }, [cards]);
 
   //EVENT SEARCH
   const handleSearch = (text) => {
-    setCardList(cardList.filter((e) => e.name.includes(text)));
+    setCardList(cardListReal.filter((e) => e.name.toLowerCase().includes(text.toLowerCase())));
   };
 
   const isLogin = (Cookies.get('isLogin') === 'true');
@@ -149,29 +156,30 @@ export default function Home() {
                   <div className="header font-weight-bold font h2" style={{ color: "black" }}>List of public exams</div>
                 </Box>
                 <Box>
-                {currentExams.map((card, id) => {
-                  return (
-                    <div className="mt-3" key={id}>
-                      <React.Suspense fallback={<div>Loading...</div>}>
-                        <CardContainer
-                          imgUrl={card.imgUrl}
-                          name={card.name}
-                          idExam={card.id}
-                          startDate={card.startDate}
-                          endDate={card.endDate}
-                          status={card.status}
-                          key={card.name + id}
-                          isOpen={card.isOpen}
-                        />
-                      </React.Suspense>
-                    </div>
-                  );
-                })}
-                <Pagination
-                  count={Math.ceil(cardList.length / examsPerPage)}
-                  page={currentPage}
-                  onChange={(event, value) => setCurrentPage(value)}
-                />
+                  {currentExams.map((card, id) => {
+                    return (
+                      <div className="mt-3" key={id}>
+                        <React.Suspense fallback={<div>Loading...</div>}>
+                          <CardContainer
+                            imgUrl={card.imgUrl}
+                            name={card.name}
+                            idExam={card.id}
+                            startDate={card.startDate}
+                            endDate={card.endDate}
+                            status={card.status}
+                            key={card.name + id}
+                            isOpen={card.isOpen}
+                            author={card.author}
+                          />
+                        </React.Suspense>
+                      </div>
+                    );
+                  })}
+                  <Pagination
+                    count={Math.ceil(cardList.length / examsPerPage)}
+                    page={currentPage}
+                    onChange={(event, value) => setCurrentPage(value)}
+                  />
                 </Box>
               </div>
               {/* Tìm kiếm khóa học */}
@@ -188,6 +196,11 @@ export default function Home() {
                     }}
                     id={`${styles.myInput}`}
                     title="Enter information of the course to search"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch(searchText);
+                      }
+                    }}
                   />
                   <button
                     className="btn btn-outline-primary my-2 my-sm-0"

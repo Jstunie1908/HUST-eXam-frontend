@@ -139,6 +139,7 @@ function Header(props) {
                     borderLeft: `${(props.page === page) ? "3px solid dodgerblue" : "3px solid white"}`,
                     paddingLeft: '20px',
                     paddingRight: '20px',
+                    width: '160px',
                   }}
                 >
                   {page}

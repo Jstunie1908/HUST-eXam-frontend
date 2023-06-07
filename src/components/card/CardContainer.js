@@ -57,7 +57,7 @@ export default function CardContainer(props) {
       >
         <CardMedia
           component="img"
-          sx={{ width: 250 }}
+          sx={{ width: "270px" }}
           image={props.imgUrl}
           alt="Photo of the exam"
         />
