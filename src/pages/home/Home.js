@@ -139,7 +139,7 @@ export default function Home() {
   const isLogin = (Cookies.get('isLogin') === 'true');
 
   if (!isLogin) {
-    return <Navigate replace to="/" />
+    return <Navigate replace to="/login" />
   }
   else {
     return (

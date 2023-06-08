@@ -60,7 +60,7 @@ function Header(props) {
       Cookies.remove('token');
       Cookies.remove('id');
       Cookies.set('isLogin', false);
-      navigate('/');
+      navigate("/login");
     }
     else {
       const url = `/${setting.toLowerCase().replace(" ", "_")}`;

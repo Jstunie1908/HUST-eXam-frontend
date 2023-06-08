@@ -36,6 +36,7 @@ export default function Exam(props) {
         }
         else {
             toast.info("OK", { autoClose: 3000 });
+            navigate(`/list_exams/exam/edit/${id}`);
         }
     }
 
