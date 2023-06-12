@@ -35,7 +35,6 @@ export default function Exam(props) {
             toast.info("You do not have permission to edit this exam", { autoClose: 3000 });
         }
         else {
-            toast.info("OK", { autoClose: 3000 });
             navigate(`/list_exams/exam/edit/${id}`);
         }
     }
@@ -88,7 +87,7 @@ export default function Exam(props) {
                                         Start the exam
                                     </Button>
                                 </Grid>
-                                <Grid item sx={{ display: `${parseInt(Cookies.get('id')) !== parseInt(exam.author) ? "none" : "flex"}` }}>
+                                <Grid item sx={{ display: `${parseInt(Cookies.get('id')) !== parseInt(exam.author) ? "none" : ""}` }}>
                                     <Button
                                         variant="contained"
                                         className="icon-button"

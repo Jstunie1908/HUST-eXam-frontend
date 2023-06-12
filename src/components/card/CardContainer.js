@@ -53,6 +53,7 @@ export default function CardContainer(props) {
           display: "flex",
           borderRadius: "25px",
           border: "1px solid black",
+          boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.4), 0 10px 20px 0 rgba(0, 0, 0, 0.4)"
         }}
       >
         <CardMedia

@@ -75,7 +75,7 @@ export default function Login() {
           // Lưu token vào Cookies, thay đổi isLogin = true trong Token
           Cookies.set('token', token, { expires: 1 });
           Cookies.set('isLogin', true);
-          Cookies.set('id', data.user.id);
+          Cookies.set('id', data.user.id, { expires: 1 });
           // Thông báo thành công vào chuyển trang
           toast.success(data.message, { autoClose: 500 });
           navigate("/home");
@@ -116,7 +116,7 @@ export default function Login() {
           // Lưu token vào Cookies, thay đổi isLogin = true trong Token
           Cookies.set('token', token, { expires: 1 });
           Cookies.set('isLogin', true);
-          Cookies.set('id', data.user.id);
+          Cookies.set('id', data.user.id, { expires: 1 });
           // Thông báo thành công vào chuyển trang
           toast.success(data.message, { autoClose: 500 });
           navigate("/home");

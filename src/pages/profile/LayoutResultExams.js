@@ -117,6 +117,7 @@ export default function LayoutResultExams() {
               </div>
               <div className="form-inline" style={{ paddingTop: "10px" }}>
                 <input
+                  style={{ boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.2)" }}
                   className="form-control mr-sm-2 w-75 mr-4"
                   type="search"
                   placeholder="Enter information of the course to search"

@@ -149,7 +149,7 @@ function Header(props) {
           </Box>
           {/* Tạo Box, bao gồm Icon Avatar và các MenuItem hiển thị khi người dùng click vào */}
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }} className="icon-button">
+            <IconButton onClick={handleOpenUserMenu} sx={{ paddingRight: '0px' }} className="icon-button">
               <Avatar />
             </IconButton>
             <Menu
