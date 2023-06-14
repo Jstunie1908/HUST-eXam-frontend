@@ -120,8 +120,9 @@ export default function ExamEdit(props) {
             if (typeQuestion === "Singular choice") {
                 const selectedTextFieldValue = selectedAnswer ? document.getElementById(`answer-option-${selectedAnswer.split('-')[1]}`).value : '';
                 const keyList = [selectedTextFieldValue];
+                // console.log(keyList);
                 dataSendToServer = {
-                    question: [
+                    questions: [
                         {
                             image_link: "none",
                             quiz_question: titleQuestion,
@@ -133,15 +134,17 @@ export default function ExamEdit(props) {
                     ]
 
                 }
-                console.log(dataSendToServer);
+
+                // console.log(dataSendToServer);
             }
             else {
                 const selectedTextFields = selectedCheckboxes.map((checkboxIndex) =>
                     document.getElementById(`answer-option-${checkboxIndex + 1}`).value
                 );
                 const keyList = [...selectedTextFields];
+                // console.log(keyList);
                 dataSendToServer = {
-                    question: [
+                    questions: [
                         {
                             image_link: "none",
                             quiz_question: titleQuestion,
@@ -153,7 +156,7 @@ export default function ExamEdit(props) {
                     ]
 
                 }
-                console.log(dataSendToServer);
+                // console.log(dataSendToServer);
             }
             const url = `http://localhost:8001/api/exam/${id}/questions`;
             const config = {
@@ -168,6 +171,17 @@ export default function ExamEdit(props) {
                 config
             );
             console.log(response);
+            if (response.data.code === 0) {
+                toast.success(response.data.message, { autoClose: 1500 });
+                // Reset
+                setTypeQuestion("Singular choice");
+                setTitleQuestion("");
+                setNumberAnswer(1);
+                setSelectedAnswer('');
+                setSelectedCheckboxes([]);
+                setScoreQuestion(0);
+                setOpenSetQuestion(false);
+            }
         } catch (error) {
             toast.error("An error occurred while connecting to the server", { autoClose: 1000 })
         }

@@ -149,9 +149,9 @@ export default function ExamContent(props) {
                 <DialogContent>
                     <DialogContentText>
                         Confirm sending the test results?
-                        <div>
+                        {/* <div> */}
                             <span style={{ color: "red" }}>{(listAnswer.length < listQuestion.length) ? " \nThere are some unanswered questions" : ""}</span>
-                        </div>
+                        {/* </div> */}
 
                     </DialogContentText>
                 </DialogContent>
