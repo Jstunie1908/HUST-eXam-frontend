@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Header from "../header/Header";
-import { Button, Checkbox, FormControl, FormControlLabel, FormLabel, Grid, IconButton, Paper, Radio, RadioGroup, TextField } from "@mui/material";
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Grid, IconButton, Paper, Radio, RadioGroup, TextField } from "@mui/material";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import Cookies from "js-cookie";
 import { Navigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { toast } from "react-toastify";
 
 export default function ExamEdit(props) {
+    const [refresh, setRefresh] = useState(false);
     const [listQuestion, setListQuestion] = useState([]);
     const [openSetQuestion, setOpenSetQuestion] = useState(false);
     // Các biến phần tạo câu hỏi
@@ -19,8 +20,21 @@ export default function ExamEdit(props) {
     const [selectedAnswer, setSelectedAnswer] = useState(''); // Đối với Radio
     const [selectedCheckboxes, setSelectedCheckboxes] = useState([]); // Đối với checkbox
     const [scoreQuestion, setScoreQuestion] = useState(0);
+    // Dialog Edit
+    const [openDialogEdit, setOpenDialogEdit] = useState(false);
+    const [questionEdit, setQuestionEdit] = useState({})
+    const [typeQuestionEdit, setTypeQuestionEdit] = useState("");
+    const [titleQuestionEdit, setTitleQuestionEdit] = useState("");
+    const [numberAnswerEdit, setNumberAnswerEdit] = useState(1);
+    const [selectedAnswerEdit, setSelectedAnswerEdit] = useState('');
+    const [selectedCheckboxesEdit, setSelectedCheckboxesEdit] = useState([]); // Đối với checkbox
+    const [scoreQuestionEdit, setScoreQuestionEdit] = useState(0);
     // Lấy ra id của bài thi
     const id = props.id;
+
+    // useEffect(() => {
+    //     console.log(listQuestion);
+    // })
 
     // Lấy dữ liệu câu hỏi hiện tại
     useEffect(() => {
@@ -37,7 +51,7 @@ export default function ExamEdit(props) {
             }
         }
         fetchData();
-    }, [id])
+    }, [id, refresh])
 
     const handleScoreChange = (event) => {
         let value = event.target.value;
@@ -46,14 +60,31 @@ export default function ExamEdit(props) {
         setScoreQuestion(value);
     };
 
+    const handleScoreChangeEdit = (event) => {
+        let value = event.target.value;
+        value = value.replace(/\D/g, '');
+        value = Math.min(Math.max(value, 0), 100);
+        setScoreQuestionEdit(value);
+    };
+
     const handleIncrease = () => {
         setSelectedAnswer('');
         setNumberAnswer((prevNumber) => (prevNumber < 10 ? prevNumber + 1 : prevNumber));
     };
 
+    const handleIncreaseEdit = () => {
+        setSelectedAnswerEdit('');
+        setNumberAnswerEdit((prevNumber) => (prevNumber < 10 ? prevNumber + 1 : prevNumber));
+    };
+
     const handleDecrease = () => {
         setSelectedAnswer('');
         setNumberAnswer((prevNumber) => (prevNumber > 1 ? prevNumber - 1 : prevNumber));
+    };
+
+    const handleDecreaseEdit = () => {
+        setSelectedAnswerEdit('');
+        setNumberAnswerEdit((prevNumber) => (prevNumber > 1 ? prevNumber - 1 : prevNumber));
     };
 
     const handleToggleSetQuestion = () => {
@@ -66,6 +97,17 @@ export default function ExamEdit(props) {
         }
         else {
             setSelectedCheckboxes((prevSelectedCheckboxes) =>
+                prevSelectedCheckboxes.filter((checkboxIndex) => checkboxIndex !== index)
+            );
+        }
+    };
+
+    const handleCheckboxChangeEdit = (event, index) => {
+        if (event.target.checked) {
+            setSelectedCheckboxesEdit((prevSelectedCheckboxes) => [...prevSelectedCheckboxes, index]);
+        }
+        else {
+            setSelectedCheckboxesEdit((prevSelectedCheckboxes) =>
                 prevSelectedCheckboxes.filter((checkboxIndex) => checkboxIndex !== index)
             );
         }
@@ -134,7 +176,6 @@ export default function ExamEdit(props) {
                     ]
 
                 }
-
                 // console.log(dataSendToServer);
             }
             else {
@@ -170,7 +211,7 @@ export default function ExamEdit(props) {
                 dataSendToServer,
                 config
             );
-            console.log(response);
+            // console.log(response);
             if (response.data.code === 0) {
                 toast.success(response.data.message, { autoClose: 1500 });
                 // Reset
@@ -181,9 +222,155 @@ export default function ExamEdit(props) {
                 setSelectedCheckboxes([]);
                 setScoreQuestion(0);
                 setOpenSetQuestion(false);
+                setRefresh(!refresh);
             }
         } catch (error) {
             toast.error("An error occurred while connecting to the server", { autoClose: 1000 })
+        }
+    }
+
+    const clickDeleteQuestion = async (idQuestion) => {
+        try {
+            const url = `http://localhost:8001/api/exam/${id}/questions/${idQuestion}`;
+            const response = await axios.delete(url);
+            console.log(response);
+            toast.success("Successfully deleted!", { autoClose: 1000 });
+            setRefresh(!refresh);
+        } catch (error) {
+            toast.error("An error occurred while connecting to the server", { autoClose: 1000 })
+            // console.log(error);
+        }
+    }
+
+    const handleCloseDialogEdit = async (choice) => {
+        if (choice === "Save") {
+            if (titleQuestionEdit === '') {
+                toast.info("You have not entered a question title", { autoClose: 1000 });
+                return;
+            }
+            if (typeQuestionEdit === 'Singular choice') {
+                const selectedTextFieldValueEdit = selectedAnswerEdit ? document.getElementById(`answer-option-${selectedAnswerEdit.split('-')[1]}-edit`).value : '';
+                if (selectedTextFieldValueEdit === "") {
+                    toast.info("The correct answer to this question is currently an empty string", { autoClose: 1000 });
+                    return;
+                }
+            }
+            else {
+                const selectedTextFieldsEdit = selectedCheckboxesEdit.map((checkboxIndex) =>
+                    document.getElementById(`answer-option-${checkboxIndex + 1}-edit`).value
+                );
+                if (selectedTextFieldsEdit.length === 0) {
+                    toast.info("The correct answer to this question is currently an empty string", { autoClose: 1000 });
+                    return;
+                }
+                for (let i = 0; i < selectedTextFieldsEdit.length; i++) {
+                    if (selectedTextFieldsEdit[i] === '') {
+                        toast.info("The correct answer to this question is currently an empty string", { autoClose: 1000 });
+                        return;
+                    }
+                }
+            }
+            // console.log("id:", id);
+            // console.log("questionEdit.id", questionEdit.id);
+            // console.log("titleQuestionEdit:", titleQuestionEdit);
+            // console.log("typeQuestionEdit:", typeQuestionEdit);
+            // console.log("numberAnswerEdit:", numberAnswerEdit);
+            // console.log("selectedAnswerEdit:", selectedAnswerEdit);
+            // console.log("selectedCheckboxesEdit:", selectedCheckboxesEdit)
+            // console.log("questionEdit:", questionEdit);
+            // console.log("answer 1:",)
+            // Vượt qua được các kiểm tra, tiếp tục lấy danh sách đáp án
+            const listAnswerEdit = [...Array(numberAnswerEdit)].map((_, index) =>
+                document.getElementById(`answer-option-${index + 1}-edit`).value
+            );
+            console.log("listAnswerEdit:", listAnswerEdit)
+            // Gửi dữ liệu đến server
+            try {
+                let dataSendToServer = {}
+                if (typeQuestionEdit === "Singular choice") {
+                    const selectedTextFieldValueEdit = selectedAnswerEdit ? document.getElementById(`answer-option-${selectedAnswerEdit.split('-')[1]}-edit`).value : '';
+                    const keyListEdit = [selectedTextFieldValueEdit];
+                    console.log(keyListEdit);
+                    dataSendToServer = {
+                        question:
+                        {
+                            image_link: "none",
+                            quiz_question: titleQuestionEdit,
+                            point: scoreQuestionEdit,
+                            quiz_type: "true_false",
+                            answer_list: listAnswerEdit,
+                            key_list: keyListEdit,
+                        }
+                    }
+                    console.log(dataSendToServer);
+                }
+                else {
+                    const selectedTextFieldsEdit = selectedCheckboxesEdit.map((checkboxIndex) =>
+                        document.getElementById(`answer-option-${checkboxIndex + 1}-edit`).value
+                    );
+                    const keyListEdit = [...selectedTextFieldsEdit];
+                    console.log(keyListEdit);
+                    dataSendToServer = {
+                        question:
+                        {
+                            image_link: "none",
+                            quiz_question: titleQuestionEdit,
+                            point: scoreQuestionEdit,
+                            quiz_type: "multiple_choice",
+                            answer_list: listAnswerEdit,
+                            key_list: keyListEdit,
+                        }
+                    }
+                    console.log(dataSendToServer);
+                }
+                const url = `http://localhost:8001/api/exam/${id}/questions/${questionEdit.id}`;
+                console.log("url:", url);
+                const config = {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                };
+                const response = await axios.put(
+                    url,
+                    dataSendToServer,
+                    config
+                );
+                console.log(response);
+                if (response.data.code === 0) {
+                    toast.success(response.data.message, { autoClose: 1500 });
+                    // Reset
+                    setTypeQuestionEdit("Singular choice");
+                    setTitleQuestionEdit("");
+                    setNumberAnswerEdit(1);
+                    setSelectedAnswerEdit('');
+                    setSelectedCheckboxesEdit([]);
+                    setScoreQuestionEdit(0);
+                    setOpenDialogEdit(false);
+                    setRefresh(!refresh);
+                }
+            } catch (error) {
+                toast.error("An error occurred while connecting to the server", { autoClose: 1000 })
+            }
+        }
+        setOpenDialogEdit(false);
+    }
+
+    const clickEditQuestion = (question) => {
+        setQuestionEdit(question);
+        setTypeQuestionEdit(question.quiz_type === "true_false" ? "Singular choice" : "Multiple choices");
+        setTitleQuestionEdit(question.quiz_question);
+        setNumberAnswerEdit(JSON.parse(question.answer_list).length);
+        setScoreQuestionEdit(question.point);
+        setOpenDialogEdit(true);
+    }
+
+    const ChangeTypeQuestionEdit = (e) => {
+        setTypeQuestionEdit(e.target.value);
+        if (e.target.value === "Singular choice") {
+            setSelectedCheckboxesEdit([]); // Reset selected checkboxes
+        } else {
+            setSelectedAnswerEdit(''); // Reset selected radio button
         }
     }
 
@@ -205,7 +392,7 @@ export default function ExamEdit(props) {
                                 (
                                     // Nếu chưa có câu hỏi nào trong exam
                                     <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
-                                        <h4 >Hiện tại chưa có câu hỏi nào trong exam</h4>
+                                        <h4>There are currently no questions in this exam</h4>
                                     </div>
 
                                 )
@@ -213,7 +400,70 @@ export default function ExamEdit(props) {
                                 (
                                     // Hiển thị danh sách câu hỏi hiện tại của exam
                                     <div style={{ paddingTop: '20px', paddingBottom: '20px' }}>
-                                        <h4>Hiển thị danh sách câu hỏi hiện tại của exam</h4>
+                                        {/* <h4>Hiển thị danh sách câu hỏi hiện tại của exam</h4> */}
+                                        {/* WRITE CODE HERE */}
+                                        {
+                                            listQuestion.map((question) => {
+                                                const answerListArray = JSON.parse(question.answer_list);
+
+                                                return (
+                                                    <div key={question.id}>
+                                                        <h6 style={{ marginTop: '20px' }}>ID: {question.id}</h6>
+                                                        <h5 style={{ marginTop: '20px' }}>{question.quiz_question}</h5>
+                                                        {
+                                                            question.quiz_type === 'multiple_choice' ?
+                                                                (
+                                                                    <div>
+                                                                        {/* Display as quiz + checkbox */}
+                                                                        {answerListArray.map((answer, index) => (
+                                                                            <div key={index}>
+                                                                                <FormControlLabel
+                                                                                    control={<Checkbox />}
+                                                                                    label={answer}
+                                                                                />
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )
+                                                                :
+                                                                (
+                                                                    <div>
+                                                                        {/* Display as quiz + radio */}
+                                                                        {answerListArray.map((answer, index) => (
+                                                                            <div key={index}>
+                                                                                <FormControlLabel
+                                                                                    control={<Radio />}
+                                                                                    label={answer}
+                                                                                />
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )
+                                                        }
+                                                        <h6>Point: {question.point}</h6>
+                                                        <h6>Type: {question.quiz_type === "true_false" ? "Singular choice" : "Multiple choices"}</h6>
+                                                        {/* Delete and edit buttons */}
+                                                        <Button
+                                                            variant="contained"
+                                                            style={{ marginRight: '20px' }}
+                                                            onClick={() => clickEditQuestion(question)}
+                                                            className="icon-button"
+                                                        >
+                                                            Edit
+                                                        </Button>
+                                                        <Button
+                                                            variant="contained"
+                                                            style={{ backgroundColor: "red" }}
+                                                            onClick={() => clickDeleteQuestion(question.id)}
+                                                            className="icon-button"
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    </div>
+                                                )
+                                            }
+                                            )
+                                        }
                                     </div>
                                 )
                         }
@@ -368,7 +618,7 @@ export default function ExamEdit(props) {
                         {/* Button Xử lý add question và cancel */}
                         <div>
                             <Button
-                                style={{ display: `${openSetQuestion === true ? 'none' : ''}` }}
+                                style={{ display: `${openSetQuestion === true ? 'none' : ''}`, backgroundColor: 'green' }}
                                 variant="contained"
                                 className="icon-button"
                                 startIcon={<AddBoxIcon />}
@@ -388,9 +638,149 @@ export default function ExamEdit(props) {
                                 Cancel
                             </Button>
                         </div>
-
                     </Paper >
                 </div >
+                {/* Dialog Edit */}
+                <div>
+                    <Dialog open={openDialogEdit} onClose={() => handleCloseDialogEdit("")} disableEscapeKeyDown={true}>
+                        <DialogTitle>Edit Question</DialogTitle>
+                        <DialogContent>
+                            <Grid
+                                container
+                                sx={{
+                                    border: '2px solid black',
+                                    marginBottom: '20px',
+                                    borderRadius: '10px',
+                                    boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.4), 0 10px 20px 0 rgba(0, 0, 0, 0.4)"
+                                }}
+                            >
+                                {/* Select question type */}
+                                <Grid item xs={12} sx={{ margin: '10px' }}>
+                                    <FormControl>
+                                        <FormLabel>Select type question</FormLabel>
+                                        <RadioGroup
+                                            row
+                                            name="row-radio-buttons-group-edit"
+                                            value={typeQuestionEdit}
+                                            onChange={(e) => ChangeTypeQuestionEdit(e)}
+                                        >
+                                            <FormControlLabel id="radio-singular-choice" value="Singular choice" control={<Radio />} label="Singular choice" />
+                                            <FormControlLabel id="radio-multiple-choice" value="Multiple choices" control={<Radio />} label="Multiple choices" />
+                                        </RadioGroup>
+                                    </FormControl>
+                                </Grid>
+                                {/* Viết đề bài */}
+                                <Grid item xs={12} sx={{ margin: '10px' }}>
+                                    <FormControl>
+                                        <FormLabel htmlFor="titlequestion-edit">Title question</FormLabel>
+                                        <textarea
+                                            id="titlequestion-edit"
+                                            style={{
+                                                width: '300%',
+                                                minHeight: '1em',
+                                                overflow: 'hidden',
+                                                resize: 'none', // Disable mouse resizing 
+                                            }}
+                                            value={titleQuestionEdit}
+                                            onChange={(e) => setTitleQuestionEdit(e.target.value)}
+                                            onInput={(event) => {
+                                                const textarea = event.target;
+                                                textarea.style.height = 'auto'; // Reset the height to calculate actual scroll height
+                                                textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
+                                            }}
+                                        ></textarea>
+                                    </FormControl>
+                                </Grid>
+                                {/* Điền số lượng đáp án */}
+                                <Grid item xs={12} sx={{ margin: '10px' }}>
+                                    <FormControl component="fieldset">
+                                        <FormLabel htmlFor="numberanswser-edit">Number answser</FormLabel>
+                                        <div>
+                                            <button onClick={handleDecreaseEdit}>-</button>
+                                            <input
+                                                style={{ width: '40px', textAlign: 'center', justifyContent: 'center' }}
+                                                type="number"
+                                                id="numberanswser-edit"
+                                                name="numberanswser-edit"
+                                                min="1"
+                                                max="10"
+                                                value={numberAnswerEdit}
+                                                readOnly
+                                            />
+                                            <button onClick={handleIncreaseEdit}>+</button>
+                                        </div>
+                                    </FormControl>
+                                </Grid>
+                                {/* Form điền đáp án */}
+                                <Grid item xs={12} sx={{ margin: '10px' }}>
+                                    <FormControl component="fieldset">
+                                        <FormLabel component="legend">Answer options</FormLabel>
+                                        {
+                                            (typeQuestionEdit === 'Singular choice') ?
+                                                (
+                                                    <RadioGroup value={selectedAnswerEdit} onChange={(event) => setSelectedAnswerEdit(event.target.value)}>
+                                                        {[...Array(numberAnswerEdit)].map((_, index) => (
+                                                            <div key={index}>
+                                                                <FormControlLabel
+                                                                    control={<Radio />}
+                                                                    label={
+                                                                        <TextField
+                                                                            id={`answer-option-${index + 1}-edit`}
+                                                                            label={`Answer ${index + 1}`}
+                                                                            variant="outlined"
+                                                                            size="small"
+                                                                        />
+                                                                    }
+                                                                    value={`answer-${index + 1}-edit`}
+                                                                />
+                                                            </div>
+                                                        ))}
+                                                    </RadioGroup>
+                                                )
+                                                :
+                                                (
+                                                    <div>
+                                                        {[...Array(numberAnswerEdit)].map((_, index) => (
+                                                            <div key={index}>
+                                                                <FormControlLabel
+                                                                    control={<Checkbox onChange={(event) => handleCheckboxChangeEdit(event, index)} />}
+                                                                    label={
+                                                                        <TextField
+                                                                            id={`answer-option-${index + 1}-edit`}
+                                                                            label={`Answer ${index + 1}`}
+                                                                            variant="outlined"
+                                                                            size="small"
+                                                                        />
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )
+                                        }
+                                    </FormControl>
+                                </Grid>
+                                {/* Điền điểm của câu hỏi */}
+                                <Grid item xs={12} sx={{ margin: '10px' }}>
+                                    <FormControl>
+                                        <FormLabel htmlFor="scorequestion-edit">Score of question (0-100)</FormLabel>
+                                        <input
+                                            id="scorequestion-edit"
+                                            style={{ width: '36px', textAlign: 'center' }}
+                                            value={scoreQuestionEdit}
+                                            onChange={handleScoreChangeEdit}
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => handleCloseDialogEdit("Save")} className="icon-button">Save</Button>
+                            <Button onClick={() => handleCloseDialogEdit("Cancel")} className="icon-button">Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
+
+                </div>
             </>
         )
     }
