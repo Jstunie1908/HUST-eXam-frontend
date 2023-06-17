@@ -17,6 +17,7 @@ export default function Exam(props) {
                 const response = await axios.get(`http://localhost:8001/api/exam/${id}`);
                 const arrExams = response.data.exams;
                 const exam = arrExams[0];
+                // console.log(exam);
                 setExam(exam);
             } catch (error) {
                 console.log(error);
@@ -26,6 +27,16 @@ export default function Exam(props) {
     }, [id])
 
     const handleClickStartExam = () => {
+        const endTime = new Date(exam.end_time);
+        const startTime = new Date(exam.start_time);
+        const currentTime = new Date();
+        if (currentTime < startTime) {
+            toast.info("This exam has not started yet", { autoClose: 1500 });
+        }
+        if (currentTime > endTime) {
+            toast.info("The participation in this exam has expired", { autoClose: 1500 });
+            return;
+        }
         Cookies.set("timeExam", exam.duration);
         navigate(`/list_exams/exam/start/${id}`);
     }
