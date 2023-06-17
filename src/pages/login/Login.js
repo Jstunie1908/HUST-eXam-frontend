@@ -176,7 +176,7 @@ export default function Login() {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <AccountCircle />
+                            <AccountCircle style={{ color: "dodgerblue" }} />
                           </InputAdornment>
                         ),
                       }}
@@ -205,7 +205,7 @@ export default function Login() {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <KeyIcon />
+                            <KeyIcon style={{ color: "dodgerblue" }} />
                           </InputAdornment>
                         ),
                         endAdornment: (

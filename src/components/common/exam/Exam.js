@@ -26,6 +26,7 @@ export default function Exam(props) {
     }, [id])
 
     const handleClickStartExam = () => {
+        Cookies.set("timeExam", exam.duration);
         navigate(`/list_exams/exam/start/${id}`);
     }
 
