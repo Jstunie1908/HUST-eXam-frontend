@@ -14,13 +14,14 @@ import ExamContent from "./components/common/exam/ExamContent";
 import Cookies from "js-cookie";
 import NewExam from "./pages/new_exam/NewExam";
 import EditExam from "./pages/edit_exam/EditExam";
+import ExamEdit from "./components/common/exam/ExamEdit";
 
 function App() {
   return (
     <div>
       <BrowserRouter>
         <Routes>
-          <Route exact path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/home" element={<Home />} />
           <Route path="list_exams" element={<ListExams />} />
@@ -31,7 +32,9 @@ function App() {
           <Route path="/list_exams/exam/:id" element={<ExamWrapper />} />
           <Route path="/list_exams/exam/start/:id" element={<ExamContentWrapper />} />
           <Route path="/exam/edit/:id" element={<EditExam />} />
-          <Route path="*" element={(Cookies.get('isLogin') === 'true') ? <Navigate replace to="/home" /> : <Navigate replace to="/" />} />
+          {/* <Route path="*" element={(Cookies.get('isLogin') === 'true') ? <Navigate replace to="/home" /> : <Navigate replace to="/" />} /> */}
+          <Route path="/list_exams/exam/edit/:id" element={<ExamEditWrapper />} />
+          <Route path="*" element={(Cookies.get('isLogin') === 'true') ? <Navigate replace to="/home" /> : <Navigate replace to="/login" />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer autoClose={500} />
@@ -43,7 +46,7 @@ function ExamWrapper() {
   const { id } = useParams();
   const isLogin = (Cookies.get('isLogin') === 'true');
   if (!isLogin) {
-    return <Navigate replace to="/" />
+    return <Navigate replace to="/login" />
   }
   else {
     return <Exam id={id} />;
@@ -54,10 +57,21 @@ function ExamContentWrapper() {
   const { id } = useParams();
   const isLogin = (Cookies.get('isLogin') === 'true');
   if (!isLogin) {
-    return <Navigate replace to="/" />
+    return <Navigate replace to="/login" />
   }
   else {
     return <ExamContent id={id} />
+  }
+}
+
+function ExamEditWrapper() {
+  const { id } = useParams();
+  const isLogin = (Cookies.get('isLogin') === 'true');
+  if (!isLogin) {
+    return <Navigate replace to="/login" />
+  }
+  else {
+    return <ExamEdit id={id} />
   }
 }
 

@@ -114,7 +114,7 @@ export default function NewExam(props) {
     };
 
     if (!isLogin) {
-        return <Navigate replace to="/" />
+        return <Navigate replace to="/login" />
     }
     else {
         return (
@@ -125,7 +125,7 @@ export default function NewExam(props) {
                 <div style={{ marginTop: "20px" }}>
                     <Grid container justifyContent="center">
                         <Grid item xs={10}>
-                            <Paper>
+                            <Paper style={{ boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.4), 0 10px 20px 0 rgba(0, 0, 0, 0.4)" }}>
                                 {/* Title Exam */}
                                 <Box sx={{ paddingLeft: '10px', paddingRight: '10px', fontSize: '180%' }}>
                                     <strong>The title of the exam</strong>

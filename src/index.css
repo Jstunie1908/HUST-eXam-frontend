@@ -17,3 +17,12 @@ code {
 .icon-button:focus {
   outline: none;
 }
+
+.time-remaining-container {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+}

@@ -17,6 +17,7 @@ export default function Exam(props) {
                 const response = await axios.get(`http://localhost:8001/api/exam/${id}`);
                 const arrExams = response.data.exams;
                 const exam = arrExams[0];
+                // console.log(exam);
                 setExam(exam);
             } catch (error) {
                 console.log(error);
@@ -26,16 +27,29 @@ export default function Exam(props) {
     }, [id])
 
     const handleClickStartExam = () => {
+        const endTime = new Date(exam.end_time);
+        const startTime = new Date(exam.start_time);
+        const currentTime = new Date();
+        if (currentTime < startTime) {
+            toast.info("This exam has not started yet", { autoClose: 1500 });
+        }
+        if (currentTime > endTime) {
+            toast.info("The participation in this exam has expired", { autoClose: 1500 });
+            return;
+        }
+        Cookies.set("timeExam", exam.duration);
         navigate(`/list_exams/exam/start/${id}`);
     }
 
     const handleClickEditExam = () => {
+        // Có thể bỏ qua đoạn này vì khi iduser khác exam.author thì đã không hiển thị nút edit
         if (parseInt(Cookies.get('id')) !== parseInt(exam.author)) {
             toast.info("You do not have permission to edit this exam", { autoClose: 3000 });
         }
         else {
             navigate(`/exam/edit/${id}`)
             // toast.info("OK", { autoClose: 3000 });
+            // navigate(`/list_exams/exam/edit/${id}`);
         }
     }
 
@@ -87,7 +101,7 @@ export default function Exam(props) {
                                         Start the exam
                                     </Button>
                                 </Grid>
-                                <Grid item>
+                                <Grid item sx={{ display: `${parseInt(Cookies.get('id')) !== parseInt(exam.author) ? "none" : ""}` }}>
                                     <Button
                                         variant="contained"
                                         className="icon-button"

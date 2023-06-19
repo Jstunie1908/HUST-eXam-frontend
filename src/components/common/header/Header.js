@@ -60,7 +60,7 @@ function Header(props) {
       Cookies.remove('token');
       Cookies.remove('id');
       Cookies.set('isLogin', false);
-      navigate('/');
+      navigate("/login");
     }
     else {
       const url = `/${setting.toLowerCase().replace(" ", "_")}`;
@@ -139,6 +139,7 @@ function Header(props) {
                     borderLeft: `${(props.page === page) ? "3px solid dodgerblue" : "3px solid white"}`,
                     paddingLeft: '20px',
                     paddingRight: '20px',
+                    width: '160px',
                   }}
                 >
                   {page}
@@ -148,7 +149,7 @@ function Header(props) {
           </Box>
           {/* Tạo Box, bao gồm Icon Avatar và các MenuItem hiển thị khi người dùng click vào */}
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }} className="icon-button">
+            <IconButton onClick={handleOpenUserMenu} sx={{ paddingRight: '0px' }} className="icon-button">
               <Avatar />
             </IconButton>
             <Menu

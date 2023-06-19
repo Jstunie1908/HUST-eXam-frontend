@@ -9,9 +9,11 @@ import Cookies from "js-cookie";
 import { Navigate } from "react-router-dom";
 
 export default function ListExams() {
-
+    // Tìm kiếm
+    const [searchText, setSearchText] = useState("");
     // Danh sách toàn bộ Exams được lưu vào listExams
     const [listExams, setListExams] = useState([]);
+    const [listExamsReal, setListExamsReal] = useState([]) // Lưu danh sách exam thực tế (sau khi tìm kiếm thì listExams bị thay đổi)
     // Sẽ hiển thị "examsPerPage" bài thi trong một trang
     const [currentPage, setCurrentPage] = useState(1);
     const examsPerPage = 5;
@@ -19,6 +21,16 @@ export default function ListExams() {
     const endIndex = startIndex + examsPerPage;
     // Lấy danh sách bài thi trong trang hiện tại
     const currentExams = listExams.slice(startIndex, endIndex);
+
+    useEffect(() => {
+        if (searchText === "") {
+            setListExams(listExamsReal);
+        }
+    }, [searchText, listExamsReal])
+
+    const handleSearch = (text) => {
+        setListExams(listExamsReal.filter((e) => e.title.toLowerCase().includes(text.toLowerCase())));
+    };
 
     function handleTime(datetime) {
         const date = new Date(datetime);
@@ -39,6 +51,7 @@ export default function ListExams() {
                 const data = response.data;
                 const exams = data.exams;
                 setListExams(exams);
+                setListExamsReal(exams);
             } catch (error) {
                 toast.error("An error occurred while connecting to the server", { autoClose: 500 })
                 console.log(error);
@@ -50,13 +63,15 @@ export default function ListExams() {
     const isLogin = (Cookies.get('isLogin') === 'true');
 
     if (!isLogin) {
-        return <Navigate replace to='/' />
+        return <Navigate replace to="/home" />
     }
     else {
         return (
-            <div>
-                <Header page="List exams" />
-                <div className={`${styles.homeContainer}`} style={{ paddingTop: '30px' }}>
+            <>
+                <div>
+                    <Header page="List exams" />
+                </div>
+                <div className={`${styles.listExamContainer}`} style={{ paddingTop: '30px' }}>
                     <div className={`${styles.content}`}>
                         <div className="row">
                             {/* Hiển thị danh sách tất cả bài thi trong hệ thống */}
@@ -87,13 +102,44 @@ export default function ListExams() {
                                     />
                                 </Box>
                             </div>
+                            {/* Tìm kiếm khóa học */}
+                            <div className="col-5">
+                                <div className="header font-weight-bold font h2" style={{ color: "white" }}>Search for exams</div>
+                                <div className="form-inline" style={{ paddingTop: '10px' }}>
+                                    <input
+                                        style={{ boxShadow: "0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.2)" }}
+                                        className="form-control mr-sm-2 w-75 mr-4"
+                                        type="search"
+                                        placeholder="Enter information of the course to search"
+                                        aria-label="Search"
+                                        onChange={(e) => {
+                                            setSearchText(e.target.value);
+                                        }}
+                                        id={`${styles.myInput}`}
+                                        title="Enter information of the course to search"
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSearch(searchText);
+                                            }
+                                        }}
+                                    />
+                                    <button
+                                        className="btn btn-outline-primary my-2 my-sm-0"
+                                        onClick={() => handleSearch(searchText)}
+                                        id={`${styles.buttonSearch}`}
+                                        title="Click to search"
+                                    >
+                                        Search
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* </Paper>
                 </div> */}
-            </div>
+            </>
         )
     }
 }

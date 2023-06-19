@@ -1,32 +1,90 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Question from "../question/Question";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function ExamContent(props) {
-    //props.id
     const id = props.id;
+    const timeExam = Cookies.get("timeExam");
     const [listQuestion, setListQuestion] = useState([]);
-    // const [listCorrectAnswer, setListCorrectAnser] = useState(Array(listQuestion.length).fill(false));
     const [exam, setExam] = useState({});
-    const [listAnswer, setListAnser] = useState([])
+    const [listAnswer, setListAnswer] = useState([]);
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
+    const [timeRemaining, setTimeRemaining] = useState(timeExam); // Thời gian còn lại (tính bằng giây)\
+    const [timerID, setTimerID] = useState(null);
+    // const [completeTime, setCompleteTime] = useState(null);
 
-    // useEffect(() => {
-    //     // Khởi tạo giá trị cho listCorrectAnswer
-    //     if (listQuestion.length > 0) {
-    //         setListCorrectAnser(Array(listQuestion.length).fill(false));
-    //     }
-    // }, [listQuestion]);
+    const handleSubmit = useCallback(() => {
+        handleOpenDialog();
+    }, []);
 
-    // useEffect(() => {
-    //     // console.log(listCorrectAnswer);
-    //     console.log(listAnswer);
-    // }, [listAnswer])
+    const handleAutoSubmit = useCallback(async () => {
+        clearInterval(timerID); // Dừng bộ đếm thời gian
+        // Gán giá trị thời gian hoàn thành bài thi
+        // setCompleteTime(timeExam - timeRemaining);
+
+        const dataSendToServer = {
+            user_id: Cookies.get("id"),
+            answers: listAnswer.map((answer) => ({
+                question_id: answer.question_id,
+                selected_options: answer.selected_option,
+            })),
+            complete_time: timeExam - timeRemaining,
+        };
+
+        const config = {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json;charset=UTF-8",
+            },
+        };
+
+        try {
+            const response = await axios.post(
+                `http://localhost:8001/api/exam/${id}/submit`,
+                dataSendToServer,
+                config
+            );
+            toast.success(response.data.message, { autoClose: 1000 });
+            Cookies.remove("timeExam");
+            localStorage.removeItem("initialTime");
+            navigate("/home");
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response.data.message, { autoClose: 1000 });
+        }
+    }, [listAnswer, id, navigate, timerID, timeRemaining, timeExam]);
+
+    useEffect(() => {
+        const initialTime = localStorage.getItem("initialTime");
+        if (!initialTime) {
+            localStorage.setItem("initialTime", Date.now());
+        } else {
+            const elapsedTime = Math.floor((Date.now() - parseInt(initialTime)) / 1000);
+            setTimeRemaining((prevTime) => Math.max(prevTime - elapsedTime, 0));
+        }
+
+        const timer = setInterval(() => {
+            setTimeRemaining((prevTime) => prevTime - 1);
+        }, 1000);
+
+        setTimerID(timer); // Lưu ID của bộ đếm thời gian
+
+        return () => {
+            clearInterval(timer);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (timeRemaining === 0) {
+            handleAutoSubmit();
+            localStorage.removeItem("initialTime");
+        }
+    }, [timeRemaining, handleAutoSubmit]);
 
     useEffect(() => {
         async function fetchData() {
@@ -42,13 +100,7 @@ export default function ExamContent(props) {
             }
         }
         fetchData();
-    }, [id])
-
-    // const handleCallBack = async (index, state) => {
-    //     const newCheckedList = [...listCorrectAnswer];
-    //     newCheckedList[index] = state;
-    //     await setListCorrectAnser(newCheckedList);
-    // }
+    }, [id]);
 
     const handleOpenDialog = () => {
         setOpenDialog(true);
@@ -57,102 +109,81 @@ export default function ExamContent(props) {
     const handleCloseDialog = async (choice) => {
         setOpenDialog(false);
         if (choice === "Yes") {
-            const dataSendToServer = {
-                user_id: Cookies.get('id'),
-                answers: listAnswer.map((answer) => ({
-                    question_id: answer.question_id,
-                    selected_options: answer.selected_option,
-                })),
-            };
-
-            const config = {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json;charset=UTF-8'
-                }
-            };
-
-            try {
-                const response = await axios.post(`http://localhost:8001/api/exam/${id}/submit`, dataSendToServer, config);
-                // console.log(response);
-                toast.success(response.data.message, { autoClose: 1000 });
-                navigate("/home");
-            } catch (error) {
-                console.log(error);
-                toast.error("An error occurred while submitting the test", { autoClose: 1000 })
-            }
+            handleAutoSubmit();
         }
     };
 
-    const handleCallBackTest = async (idQuestion, arrKeySelected) => {
+    const handleCallBackTest = (idQuestion, arrKeySelected) => {
         const listAnswerTmp = [...listAnswer];
         let exist = false;
         for (let i = 0; i < listAnswerTmp.length; i++) {
-            if (listAnswerTmp[i]["question_id"] === idQuestion) {
+            if (listAnswerTmp[i].question_id === idQuestion) {
                 exist = true;
-                listAnswerTmp[i]["selected_option"] = arrKeySelected;
+                listAnswerTmp[i].selected_option = arrKeySelected;
                 break;
             }
         }
-        if (exist === false) {
-            listAnswerTmp.push({ "question_id": idQuestion, "selected_option": arrKeySelected });
+        if (!exist) {
+            listAnswerTmp.push({ question_id: idQuestion, selected_option: arrKeySelected });
         }
-        setListAnser(listAnswerTmp);
-    }
+        setListAnswer(listAnswerTmp);
+    };
 
-    const handleSubmit = async () => {
-        // const count = listCorrectAnswer.filter((answer) => answer === true).length;
-        // console.log(`Số câu trả lời đúng là: ${count}`);
-        handleOpenDialog();
-    }
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    };
 
     return (
         <div>
-            <Paper variant="24" sx={{ marginTop: '20px', marginLeft: '40px', marginRight: '40px' }}>
-                {/* Hiển thị tiêu đề */}
-                <Box sx={{ borderBottom: '2px solid grey', paddingTop: '20px', paddingBottom: '20px' }}>
-                    <div className="header font-weight-bold font h4" style={{ color: "black", marginLeft: '20px' }}>Title Exam : <span>{exam.title}</span></div>
+            <Paper variant="24" sx={{ marginTop: "20px", marginLeft: "40px", marginRight: "40px" }}>
+                <Box sx={{ borderBottom: "2px solid grey", paddingTop: "20px", paddingBottom: "20px" }}>
+                    <div className="header font-weight-bold font h4" style={{ color: "black", marginLeft: "20px" }}>
+                        Title Exam : <span>{exam.title}</span>
+                    </div>
                 </Box>
-                {/* Hiển thị nội dung câu hỏi */}
                 {listQuestion.map((item, index) => (
                     <div className="mt-3" key={index}>
                         <Question
                             id={item.id}
-                            index={index} // Truyền index cho component con
+                            index={index}
                             quizType={item.quiz_type}
                             answerList={item.answer_list}
                             keyList={item.key_list}
                             quizQuestion={item.quiz_question}
-                            // onChangeAnswer={(index, state) => handleCallBack(index, state)} // Truyền hàm callback cho component con
                             onChangeListAnswer={(idQuestion, listAnswer) => handleCallBackTest(idQuestion, listAnswer)}
                         />
                     </div>
                 ))}
-                {/* Nộp bài */}
                 <Grid container>
                     <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <Button
-                                variant="contained"
-                                sx={{ marginBottom: '10px' }}
-                                className="icon-button"
-                                onClick={handleSubmit}
-                            >
+                        <Box sx={{ display: "flex", justifyContent: "center" }}>
+                            <Button variant="contained" sx={{ marginBottom: "10px" }} className="icon-button" onClick={handleSubmit}>
                                 Submit
                             </Button>
                         </Box>
                     </Grid>
                 </Grid>
             </Paper>
+            <div className="time-remaining-container">
+                <strong style={{ color: `${timeRemaining < 60 ? "red" : "green"}` }}>
+                    Time Remaining: {formatTime(timeRemaining)}
+                </strong>
+            </div>
+            {/* {completeTime !== null && (
+                <div className="complete-time-container">
+                    <strong>Complete Time: {formatTime(completeTime)}</strong>
+                </div>
+            )} */}
             <Dialog open={openDialog} onClose={() => handleCloseDialog("")} disableEscapeKeyDown={true}>
                 <DialogTitle>Confirm</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Confirm sending the test results?
-                        <div>
-                            <span style={{ color: "red" }}>{(listAnswer.length < listQuestion.length) ? " \nThere are some unanswered questions" : ""}</span>
-                        </div>
-
+                        <span style={{ color: "red" }}>
+                            {listAnswer.length < listQuestion.length ? " \nThere are some unanswered questions" : ""}
+                        </span>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -161,5 +192,5 @@ export default function ExamContent(props) {
                 </DialogActions>
             </Dialog>
         </div>
-    )
+    );
 }

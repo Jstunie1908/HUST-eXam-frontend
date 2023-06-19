@@ -139,7 +139,7 @@ export default function Question(props) {
                         <Box sx={{ paddingLeft: '10px', paddingTop: '10px' }}>
                             <Button
                                 variant="contained"
-                                sx={{ marginBottom: '10px' }}
+                                sx={{ marginBottom: '10px', backgroundColor: `${save ? "green" : "blue"}` }}
                                 className="icon-button"
                                 onClick={handleSave}
                             >

@@ -17,7 +17,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Link, Navigate } from "react-router-dom";
-import "../../styles/Login.css";
+import "./Login.module.css";
 import { changeStateIsLogin, addToken } from "./loginSlice";
 import { useNavigate } from "react-router-dom";
 import validator from "validator";
@@ -75,7 +75,7 @@ export default function Login() {
           // Lưu token vào Cookies, thay đổi isLogin = true trong Token
           Cookies.set('token', token, { expires: 1 });
           Cookies.set('isLogin', true);
-          Cookies.set('id', data.user.id);
+          Cookies.set('id', data.user.id, { expires: 1 });
           // Thông báo thành công vào chuyển trang
           toast.success(data.message, { autoClose: 500 });
           navigate("/home");
@@ -116,7 +116,7 @@ export default function Login() {
           // Lưu token vào Cookies, thay đổi isLogin = true trong Token
           Cookies.set('token', token, { expires: 1 });
           Cookies.set('isLogin', true);
-          Cookies.set('id', data.user.id);
+          Cookies.set('id', data.user.id, { expires: 1 });
           // Thông báo thành công vào chuyển trang
           toast.success(data.message, { autoClose: 500 });
           navigate("/home");
@@ -176,7 +176,7 @@ export default function Login() {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <AccountCircle />
+                            <AccountCircle style={{ color: "dodgerblue" }} />
                           </InputAdornment>
                         ),
                       }}
@@ -205,7 +205,7 @@ export default function Login() {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <KeyIcon />
+                            <KeyIcon style={{ color: "dodgerblue" }} />
                           </InputAdornment>
                         ),
                         endAdornment: (

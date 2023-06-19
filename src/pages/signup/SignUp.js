@@ -83,7 +83,7 @@ export default function SignUp() {
                 // Thông báo thành công
                 if (data.code === 0) {
                     toast.success(data.message, { autoClose: 500 });
-                    navigate('/');
+                    navigate("/login");
                 }
 
             } catch (error) {
