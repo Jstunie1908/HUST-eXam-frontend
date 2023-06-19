@@ -39,6 +39,7 @@ export default function LayoutProfile() {
         async function fetchData() {
             try {
                 const id = Cookies.get('id');
+                // console.log("token:", token);
                 const response = await axios.get(`http://localhost:8001/api/user/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`

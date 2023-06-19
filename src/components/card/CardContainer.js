@@ -8,9 +8,42 @@ import Button from "@mui/material/Button";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 
 export default function CardContainer(props) {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [passwordOfExam, setPasswordOfExam] = useState("");
+
+  const handleCloseDialog = async (choice) => {
+    if (choice === "Accept") {
+      Cookies.set('passwordOfExam', passwordOfExam);
+      try {
+        const response = await axios.post(`http://localhost:8001/api/exam/${props.idExam}`, { password: passwordOfExam }, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`
+          }
+        });
+        // console.log(response);
+        if (response.data.code === 0) {
+          navigate(`/list_exams/exam/${props.idExam}`)
+        }
+      } catch (error) {
+        if (error.response.data.message) {
+          toast.info(error.response.data.message, { autoClose: 2000 });
+        }
+        else {
+          toast.error("An error occurred while connecting to the server", { autoClose: 1500 })
+        }
+      }
+      // navigate(`/list_exams/exam/${props.idExam}`)
+    }
+    setOpenDialog(false);
+  }
 
   const compareTime = (dateString) => {
     const dateParts = dateString.split(" - ");
@@ -37,14 +70,19 @@ export default function CardContainer(props) {
 
   const handleClickView = async () => {
     try {
+      // Có mật khẩu (private) thì cần thực hiện việc nhập mật khẩu
+      if (props.status === 'private') {
+        setOpenDialog(true);
+      }
+      else {
+        navigate(`/list_exams/exam/${props.idExam}`)
+      }
       // const response = await axios.get(`http://localhost:8001/api/exam/${props.idExam}`);
       // console.log(response);
-      navigate(`/list_exams/exam/${props.idExam}`)
     } catch (error) {
       console.log(error);
     }
   }
-
 
   return (
     <div>
@@ -157,10 +195,12 @@ export default function CardContainer(props) {
                   size="small"
                   className="icon-button"
                   onClick={handleClickView}
-                  disabled={props.isOpen === 1 ? false : true}
+                  // Chỉ ấn vào được view khi là tác giả của bài thi hoặc bài thi mở open
+                  disabled={(props.isOpen === 1 || props.author === parseInt(Cookies.get('id'))) ? false : true}
                 >
                   View
                 </Button>
+
               </>
             ) : (
               <>
@@ -173,6 +213,28 @@ export default function CardContainer(props) {
           </CardActions>
         </Box>
       </Card>
+      <Dialog open={openDialog} onClose={() => handleCloseDialog("")} disableEscapeKeyDown={true}>
+        <DialogTitle>Confirm Password of Exam</DialogTitle>
+        <DialogContent>
+          <DialogContent>
+            <div>
+              <label htmlFor="enterpassword">Enter password of exam</label>
+              <input
+                type="password"
+                title="Enter password of exam"
+                id="enterpassword"
+                value={passwordOfExam}
+                onChange={(e) => setPasswordOfExam(e.target.value)}
+                autoFocus
+              />
+            </div>
+          </DialogContent>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleCloseDialog("Accept")} className="icon-button">Accept</Button>
+          <Button onClick={() => handleCloseDialog("Cancel")} className="icon-button">Cancel</Button>
+        </DialogActions>
+      </Dialog>
     </div >
   );
 }

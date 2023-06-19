@@ -14,11 +14,16 @@ export default function Exam(props) {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`http://localhost:8001/api/exam/${id}`);
+                const response = await axios.post(`http://localhost:8001/api/exam/${id}`, { password: Cookies.get("passwordOfExam") }, {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get('token')}`
+                    }
+                });
                 const arrExams = response.data.exams;
                 const exam = arrExams[0];
                 // console.log(exam);
                 setExam(exam);
+                // Cookies.remove("passwordOfExam");
             } catch (error) {
                 console.log(error);
             }
@@ -32,6 +37,7 @@ export default function Exam(props) {
         const currentTime = new Date();
         if (currentTime < startTime) {
             toast.info("This exam has not started yet", { autoClose: 1500 });
+            return;
         }
         if (currentTime > endTime) {
             toast.info("The participation in this exam has expired", { autoClose: 1500 });

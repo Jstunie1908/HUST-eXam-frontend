@@ -14,7 +14,7 @@ export default function ExamContent(props) {
     const [listAnswer, setListAnswer] = useState([]);
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
-    const [timeRemaining, setTimeRemaining] = useState(timeExam); // Thời gian còn lại (tính bằng giây)\
+    const [timeRemaining, setTimeRemaining] = useState(timeExam <= 0 ? 60 : timeExam); // Thời gian còn lại (tính bằng giây)\
     const [timerID, setTimerID] = useState(null);
     // const [completeTime, setCompleteTime] = useState(null);
 
@@ -40,6 +40,7 @@ export default function ExamContent(props) {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json;charset=UTF-8",
+                Authorization: `Bearer ${Cookies.get('token')}`,
             },
         };
 
@@ -89,7 +90,11 @@ export default function ExamContent(props) {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`http://localhost:8001/api/exam/${id}`);
+                const response = await axios.post(`http://localhost:8001/api/exam/${id}`, { password: Cookies.get("passwordOfExam") }, {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get('token')}`,
+                    }
+                });
                 const arrExams = response.data.exams;
                 const exam = arrExams[0];
                 setExam(exam);

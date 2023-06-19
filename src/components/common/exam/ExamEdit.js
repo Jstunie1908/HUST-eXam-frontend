@@ -1,15 +1,21 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Header from "../header/Header";
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Grid, IconButton, Paper, Radio, RadioGroup, TextField } from "@mui/material";
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormLabel, Grid, IconButton, MenuItem, Paper, Radio, RadioGroup, Select, TextField } from "@mui/material";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import Cookies from "js-cookie";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { toast } from "react-toastify";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { MultiInputDateTimeRangeField } from "@mui/x-date-pickers-pro";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
 export default function ExamEdit(props) {
+    const navigate = useNavigate();
     const [refresh, setRefresh] = useState(false);
     const [listQuestion, setListQuestion] = useState([]);
     const [openSetQuestion, setOpenSetQuestion] = useState(false);
@@ -31,18 +37,50 @@ export default function ExamEdit(props) {
     const [scoreQuestionEdit, setScoreQuestionEdit] = useState(0);
     // Lấy ra id của bài thi
     const id = props.id;
+    // Update Exam
+    const [newTitle, setNewTitle] = useState("");
+    const [newDuration, setNewDuration] = useState("");
+    const [newOpen, setNewOpen] = useState(false);
+    const [newState, setNewState] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
+    const [startTimeConvert, setStartTimeConvert] = useState("");
+    const [endTimeConvert, setEndTimeCovert] = useState("");
+    // Delete exam
+    const [openDialogDeleteExam, setOpenDialogDeleteExam] = useState(false);
 
     // useEffect(() => {
-    //     console.log(listQuestion);
+    //     console.log(startTimeConvert && startTimeConvert);
+    //     console.log(endTimeConvert && endTimeConvert);
     // })
+
+    useEffect(() => {
+        setStartTimeConvert(startTime && dayjs(startTime).format('YYYY/MM/DD HH:mm:ss'));
+        setEndTimeCovert(endTime && dayjs(endTime).format('YYYY/MM/DD HH:mm:ss'));
+    }, [startTime, endTime])
 
     // Lấy dữ liệu câu hỏi hiện tại
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get(`http://localhost:8001/api/exam/${id}`);
+                const response = await axios.post(`http://localhost:8001/api/exam/${id}`, { password: Cookies.get("passwordOfExam") }, {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get('token')}`,
+                    }
+                });
                 const arrExams = response.data.exams;
                 const exam = arrExams[0];
+                // console.log(exam);
+                setNewTitle(exam.title);
+                setNewDuration(exam.duration);
+                setNewOpen(exam.is_open)
+                setNewState(exam.state);
+                setNewPassword(exam.state === "private" ? `${exam.password}` : "");
+                const startDateTime = dayjs(exam.start_time); // Convert start_time to dayjs object
+                const endDateTime = dayjs(exam.end_time); // Convert end_time to dayjs object
+                setStartTime(startDateTime);
+                setEndTime(endDateTime);
                 const lstQuest = exam.Questions;
                 // console.log(lstQuest);
                 setListQuestion(lstQuest);
@@ -52,6 +90,78 @@ export default function ExamEdit(props) {
         }
         fetchData();
     }, [id, refresh])
+
+    const handleClickUpdate = async () => {
+        try {
+            const url = `http://localhost:8001/api/exam/${id}`;
+            let dataSendToServer = {}
+            if (newState === "private") {
+                dataSendToServer = {
+                    title: newTitle,
+                    start_time: startTimeConvert,
+                    end_time: endTimeConvert,
+                    is_open: newOpen,
+                    state: newState,
+                    password: newPassword,
+                    author: parseInt(Cookies.get('id')),
+                    duration: newDuration,
+                }
+            }
+            else {
+                dataSendToServer = {
+                    title: newTitle,
+                    start_time: startTimeConvert,
+                    end_time: endTimeConvert,
+                    is_open: newOpen,
+                    state: newState,
+                    password: null,
+                    author: parseInt(Cookies.get('id')),
+                    duration: newDuration,
+                }
+            }
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${Cookies.get('token')}`
+                }
+            }
+            const response = await axios.put(url, dataSendToServer, config);
+            console.log(response);
+            if (response.data.code === 0) {
+                toast.success("Update Succesfully", { autoClose: 2000 });
+                const passwordNewOfExam = (newState === "public") ? null : newPassword;
+                Cookies.set('passwordOfExam', passwordNewOfExam);
+            }
+        }
+        catch (error) {
+            toast.error("An error occurred while connecting to the server", { autoClose: 1500 })
+        }
+    }
+
+    const handleClickDeleteExam = () => {
+        setOpenDialogDeleteExam(true);
+    }
+
+    const handleCloseDialogDeleteExam = async (choice) => {
+        if (choice === "Accept") {
+            try {
+                const url = `http://localhost:8001/api/exam/${id}`;
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get('token')}`
+                    }
+                }
+                const response = await axios.delete(url, config);
+                console.log(response);
+                if (response.data.code === 0) {
+                    toast.success(response.data.message, { autoClose: 2000 });
+                    navigate('/list_exams');
+                }
+            } catch (error) {
+                toast.error("An error occurred while connecting to the server", { autoClose: 1500 })
+            }
+        }
+        setOpenDialogDeleteExam(false);
+    }
 
     const handleScoreChange = (event) => {
         let value = event.target.value;
@@ -203,7 +313,8 @@ export default function ExamEdit(props) {
             const config = {
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json;charset=UTF-8'
+                    'Content-Type': 'application/json;charset=UTF-8',
+                    Authorization: `Bearer ${Cookies.get('token')}`,
                 }
             };
             const response = await axios.post(
@@ -232,7 +343,11 @@ export default function ExamEdit(props) {
     const clickDeleteQuestion = async (idQuestion) => {
         try {
             const url = `http://localhost:8001/api/exam/${id}/questions/${idQuestion}`;
-            const response = await axios.delete(url);
+            const response = await axios.delete(url, {
+                headers: {
+                    Authorization: `Bearer ${Cookies.get('token')}`,
+                }
+            });
             console.log(response);
             toast.success("Successfully deleted!", { autoClose: 1000 });
             setRefresh(!refresh);
@@ -328,7 +443,8 @@ export default function ExamEdit(props) {
                 const config = {
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json;charset=UTF-8'
+                        'Content-Type': 'application/json;charset=UTF-8',
+                        Authorization: `Bearer ${Cookies.get('token')}`,
                     }
                 };
                 const response = await axios.put(
@@ -386,6 +502,108 @@ export default function ExamEdit(props) {
                     <Header page="Edit exam" />
                 </div>
                 <div style={{ paddingTop: '90px', paddingLeft: '20px', paddingRight: '20px' }}>
+                    {/* Thông tin bài thi */}
+                    <Paper sx={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '20px', marginBottom: '20px' }}>
+                        <div style={{ paddingTop: '10px' }}>
+                            <label htmlFor="new-title"><span style={{ fontWeight: 'bold', paddingRight: "4px" }}>Title of exam </span> </label>
+                            <input
+                                style={{ borderWidth: '0px 0px 2px 0px', borderColor: 'black' }}
+                                type="text"
+                                id="new-title"
+                                name="new-title"
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                            />
+                            <br />
+                            <label htmlFor="new-duration"><span style={{ fontWeight: 'bold', paddingRight: "4px" }}>Duration of exam (second) </span></label>
+                            <input
+                                style={{ borderWidth: '0px 0px 2px 0px', borderColor: 'black' }}
+                                type="number"
+                                id="new-duration"
+                                name="new-duration"
+                                value={newDuration}
+                                onChange={(e) => setNewDuration(e.target.value)}
+
+                            />
+                            <br />
+                            <label htmlFor="new-open"><span style={{ fontWeight: 'bold', paddingRight: "4px" }}>Open </span></label>
+                            <Select
+                                style={{ height: '40%' }}
+                                labelId="Open"
+                                id="new-open"
+                                value={newOpen}
+                                onChange={(e) => setNewOpen(e.target.value)}
+                                label="Open"
+                            >
+                                <MenuItem value="true">true</MenuItem>
+                                <MenuItem value="false">false</MenuItem>
+                            </Select>
+                            <br />
+                            <label htmlFor="select-time"><span style={{ fontWeight: 'bold', paddingRight: "4px" }}> Select time</span></label>
+                            <Box sx={{ width: '40%', paddingTop: '1px', paddingLeft: '10px', paddingBottom: '10px' }}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer
+                                        components={[
+                                            'MultiInputDateTimeRangeField',
+                                        ]}
+                                    >
+                                        <MultiInputDateTimeRangeField
+                                            slotProps={{
+                                                textField: ({ position }) => ({
+                                                    label: position === 'start' ? 'Start time' : 'End time',
+                                                }),
+                                            }}
+                                            value={[startTime, endTime]}
+                                            onChange={(newValue) => {
+                                                setStartTime(newValue[0]);
+                                                setEndTime(newValue[1]);
+                                            }}
+                                        />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </Box>
+                            <label htmlFor="new-state"><span style={{ fontWeight: 'bold', paddingRight: "4px" }}>State </span></label>
+                            <Select
+                                labelId="State"
+                                id="new-state"
+                                value={newState}
+                                onChange={(e) => setNewState(e.target.value)}
+                                label="State"
+                            >
+                                <MenuItem value="public">public</MenuItem>
+                                <MenuItem value="private">private</MenuItem>
+                            </Select>
+                            <div style={{ display: `${newState === 'private' ? "flex" : "none"}` }}>
+                                <label htmlFor="new-password"><span style={{ fontWeight: 'bold', paddingRight: "4px" }}>New password </span></label>
+                                <input
+                                    type="password"
+                                    id="new-password"
+                                    name="new-password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                />
+                            </div>
+                            <br />
+                        </div>
+                        <div style={{ paddingTop: '10px' }}>
+                            <Button
+                                variant="contained"
+                                className="icon-button"
+                                onClick={handleClickUpdate}
+                            >
+                                Update
+                            </Button>
+                            <Button
+                                style={{ marginLeft: '10px', backgroundColor: 'red' }}
+                                variant="contained"
+                                className="icon-button"
+                                onClick={handleClickDeleteExam}
+                            >
+                                Delete Exam
+                            </Button>
+                        </div>
+                    </Paper>
+
                     <Paper sx={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '20px' }}>
                         {
                             (listQuestion.length === 0) ?
@@ -779,7 +997,16 @@ export default function ExamEdit(props) {
                             <Button onClick={() => handleCloseDialogEdit("Cancel")} className="icon-button">Cancel</Button>
                         </DialogActions>
                     </Dialog>
-
+                    <Dialog open={openDialogDeleteExam} onClose={() => handleCloseDialogDeleteExam("")} disableEscapeKeyDown={true}>
+                        <DialogTitle>Confirm Delete Exam</DialogTitle>
+                        <DialogContent>
+                            After deletion, the exam cannot be recovered
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => handleCloseDialogDeleteExam("Accept")} className="icon-button">Accept</Button>
+                            <Button onClick={() => handleCloseDialogDeleteExam("Cancel")} className="icon-button">Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             </>
         )
