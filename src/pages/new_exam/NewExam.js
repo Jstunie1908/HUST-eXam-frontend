@@ -24,6 +24,7 @@ export default function NewExam() {
     const [isOpen, setIsOpen] = useState("false");
     const [state, setState] = useState("public");
     const [passwordExam, setPasswordExam] = useState("");
+    const [duration, setDuration] = useState("");
 
     useEffect(() => {
         setStartTimeConvert(startTime && dayjs(startTime).format('YYYY/MM/DD HH:mm:ss'));
@@ -42,6 +43,10 @@ export default function NewExam() {
             toast.info("The exam title is not filled in !", { autoClose: 1000 });
             return;
         }
+
+        if (duration === 0 || duration === null) {
+            toast.info("Duration of exam cannot be equal to 0");
+        }
         if (startTimeConvert === "" || startTimeConvert === "Invalid Date" || startTimeConvert === null
             || endTimeConvert === "" || endTimeConvert === "Invalid Date" || endTimeConvert === null) {
             toast.info("You have not entered the time of the test !", { autoClose: 1000 });
@@ -51,6 +56,9 @@ export default function NewExam() {
             toast.info("End time must be the time after Start time !", { autoClose: 1000 });
             return;
         }
+        if (state === 'private' && passwordExam === '') {
+            toast.info("The exam password is not filled in !")
+        }
         let dataSendToServer = {};
         if (state === 'private') {
             dataSendToServer = {
@@ -59,8 +67,9 @@ export default function NewExam() {
                 end_time: endTimeConvert,
                 is_open: isOpen,
                 state: state,
-                passwword: passwordExam,
+                password: passwordExam,
                 author: parseInt(id),
+                duration: (duration * 60),
             }
         }
         else {
@@ -71,11 +80,16 @@ export default function NewExam() {
                 is_open: isOpen,
                 state: state,
                 author: parseInt(id),
+                duration: (duration * 60),
             }
         }
         console.log(dataSendToServer);
         try {
-            const response = await axios.post("http://localhost:8001/api/exam", dataSendToServer);
+            const response = await axios.post("http://localhost:8001/api/exam", dataSendToServer, {
+                headers: {
+                    Authorization: `Bearer ${Cookies.get('token')}`,
+                }
+            });
             toast.success(response.data.message, { autoClose: 1000 });
             setTitleExam("");
             setStartTimeConvert("");
@@ -85,6 +99,7 @@ export default function NewExam() {
             setIsOpen("false");
             setState("public");
             setPasswordExam("");
+            setDuration(null);
 
         } catch (error) {
             toast.error("An error occurred while connecting to the server", { autoClose: 1000 });
@@ -165,6 +180,19 @@ export default function NewExam() {
                                         </DemoContainer>
                                     </LocalizationProvider>
                                 </Box>
+                                {/* Nhập Duration Exam */}
+                                <TextField
+                                    sx={{ paddingTop: '20px', paddingLeft: '10px', paddingBottom: '10px', width: '40%' }}
+                                    required
+                                    type="number"
+                                    id="durationExam"
+                                    value={duration}
+                                    variant="outlined"
+                                    placeholder="Please enter duration of exam (time is measured in minutes)"
+                                    title="Time is measured in minutes"
+                                    onChange={(e) => setDuration(e.target.value)}
+                                    helperText={titleExam === "" ? <span style={{ color: "red" }}>The duration of is not filled in</span> : ""}
+                                />
                                 {/* Chỉnh trạng thái Open */}
                                 <Grid container alignItems="center" sx={{ paddingLeft: "10px", paddingBottom: "10px" }}>
                                     <Grid item xs={0.5}>
