@@ -1,5 +1,7 @@
 import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Radio, RadioGroup } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export default function Question(props) {
     const id = props.id;
@@ -14,7 +16,7 @@ export default function Question(props) {
 
     // Khởi tạo state để lưu trữ trạng thái của các checkbox, ví dụ như [false, false, false]
     const [checkedList, setCheckedList] = useState(
-        Array(arrAnswerList.length).fill(false)
+        !props.result ? Array(arrAnswerList.length).fill(false) : Array(arrAnswerList.length).fill(arrAnswerList)
     );
 
     // Khởi tạo state để lưu trữ giá trị đáp án được chọn trong RadioGroup, ví dụ như "A"
@@ -27,6 +29,24 @@ export default function Question(props) {
 
     // Biến isCorrectRadio kiểm tra xem đáp án được chọn chính xác hay không
     // const isCorrectRadio = arrKeyList.includes(selectedAnswer);
+
+    // useEffect(()=>{
+    //     async function fetchData() {
+    //         try {
+    //             const results = await axios.get(`http://localhost:8001/api/exam/${id}/result`,{user_id: props.user_id}, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${Cookies.get('token')}`,
+    //                 }
+    //             });
+    //             console.log(results)
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    //     if(props.result){
+    //         fetchData()
+    //     }
+    // },[])
 
     // useEffect(() => {
     //     if (quizType === "multiple_choice") {
@@ -103,6 +123,7 @@ export default function Question(props) {
                                                 <Checkbox
                                                     checked={checkedList[index]}
                                                     onChange={() => handleCheckChange(index)}
+                                                    disabled= {props.result}
                                                 />
                                                 {answer}
                                             </Grid>
@@ -123,6 +144,7 @@ export default function Question(props) {
                                                 <Grid item xs={12} key={index} sx={{ paddingTop: '10px' }}>
                                                     <FormControlLabel
                                                         value={answer}
+                                                        disabled={props.result}
                                                         control={<Radio />}
                                                         label={answer}
                                                     />
@@ -134,7 +156,7 @@ export default function Question(props) {
                             )
                     }
                 </Grid>
-                <Grid container>
+                {!props.result && <Grid container>
                     <Grid item xs={12}>
                         <Box sx={{ paddingLeft: '10px', paddingTop: '10px' }}>
                             <Button
@@ -147,7 +169,7 @@ export default function Question(props) {
                             </Button>
                         </Box>
                     </Grid>
-                </Grid>
+                </Grid>}
             </Grid>
         </div >
     )

@@ -84,6 +84,27 @@ export default function CardContainer(props) {
     }
   }
 
+  const handleClickViewDetail = () => {
+    const getResult = async () => {
+      const config = {
+          headers: {
+              // Accept: "application/json",
+              // "Content-Type": "application/json;charset=UTF-8",
+              Authorization: `Bearer ${Cookies.get('token')}`,
+          },
+      };
+      const results = await axios.get(`http://localhost:8001/api/exam/${props.idExam}/result`,{user_id: Cookies.get("id")}, config);
+      console.log(results)
+      return results
+  }
+    const results = getResult();
+    if(true){
+      toast.info("this exam has not finished yet ", { autoClose: 1500 })
+      return;
+    }
+    navigate(`/result/exam/${props.user_id}/${props.idExam}`)
+  }
+
   return (
     <div>
       <Card
@@ -144,7 +165,7 @@ export default function CardContainer(props) {
               </Typography>
             )}
             {/* Dành cho kết quả bài thi */}
-            {props.point && (
+            {(props.point || props.point === 0) && (
               <Typography
                 variant="subtitle1"
                 color="success.main"
@@ -189,7 +210,7 @@ export default function CardContainer(props) {
 
           </CardContent>
           <CardActions>
-            {!props.point ? (
+            {(!props.point &&  props.point !== 0) ? (
               <>
                 <Button
                   size="small"
@@ -204,7 +225,7 @@ export default function CardContainer(props) {
               </>
             ) : (
               <>
-                <Button size="small" color="primary">
+                <Button size="small" color="primary" onClick={handleClickViewDetail} >
                   View Detail Result
                 </Button>
               </>
