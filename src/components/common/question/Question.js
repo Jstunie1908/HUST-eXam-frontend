@@ -14,7 +14,7 @@ export default function Question(props) {
 
     // Khởi tạo state để lưu trữ trạng thái của các checkbox, ví dụ như [false, false, false]
     const [checkedList, setCheckedList] = useState(
-        Array(arrAnswerList.length).fill(false)
+        !props.result ? Array(arrAnswerList.length).fill(false) : props.keyAns
     );
 
     // Khởi tạo state để lưu trữ giá trị đáp án được chọn trong RadioGroup, ví dụ như "A"
@@ -103,6 +103,7 @@ export default function Question(props) {
                                                 <Checkbox
                                                     checked={checkedList[index]}
                                                     onChange={() => handleCheckChange(index)}
+                                                    disabled= {props.result}
                                                 />
                                                 {answer}
                                             </Grid>
@@ -123,6 +124,7 @@ export default function Question(props) {
                                                 <Grid item xs={12} key={index} sx={{ paddingTop: '10px' }}>
                                                     <FormControlLabel
                                                         value={answer}
+                                                        disabled={props.result}
                                                         control={<Radio />}
                                                         label={answer}
                                                     />
@@ -134,7 +136,7 @@ export default function Question(props) {
                             )
                     }
                 </Grid>
-                <Grid container>
+                {!props.result && <Grid container>
                     <Grid item xs={12}>
                         <Box sx={{ paddingLeft: '10px', paddingTop: '10px' }}>
                             <Button
@@ -147,7 +149,7 @@ export default function Question(props) {
                             </Button>
                         </Box>
                     </Grid>
-                </Grid>
+                </Grid>}
             </Grid>
         </div >
     )
