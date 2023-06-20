@@ -90,19 +90,21 @@ export default function CardContainer(props) {
           headers: {
               // Accept: "application/json",
               // "Content-Type": "application/json;charset=UTF-8",
-              Authorization: `Bearer ${Cookies.get('token')}`,
+              Authorization:`Bearer ${Cookies.get("token")}`,
           },
       };
-      const results = await axios.get(`http://localhost:8001/api/exam/${props.idExam}/result`,{user_id: Cookies.get("id")}, config);
+      const results = await axios.post(`http://localhost:8001/api/exam/${props.idExam}/result`,{user_id: Number(Cookies.get("id"))}, config);
       console.log(results)
       return results
   }
-    const results = getResult();
-    if(true){
-      toast.info("this exam has not finished yet ", { autoClose: 1500 })
+    
+    getResult().then((res) => {
+      navigate(`/result/exam/${props.user_id}/${props.idExam}`)
+    }).catch((err) => {
+      console.log(err)
+      toast.info( err.response.data.message, { autoClose: 1500 })
       return;
-    }
-    navigate(`/result/exam/${props.user_id}/${props.idExam}`)
+    })
   }
 
   return (

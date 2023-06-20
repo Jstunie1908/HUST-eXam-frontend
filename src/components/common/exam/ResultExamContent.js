@@ -10,6 +10,7 @@ export default function ResultExamContent(props) {
     const id = props.id;
     const timeExam = Cookies.get("timeExam");
     const [listQuestion, setListQuestion] = useState([]);
+    const [keyList, setKeyList] = useState([])
     const [exam, setExam] = useState({});
     const [listAnswer, setListAnswer] = useState([]);
     const navigate = useNavigate();
@@ -117,12 +118,33 @@ export default function ResultExamContent(props) {
                     Authorization: `Bearer ${Cookies.get('token')}`,
                 },
             };
-            const results = await axios.get(`http://localhost:8001/api/exam/${id}/result`,{user_id: Cookies.get("id")}, config);
-            console.log(results)
+            const results = await axios.post(`http://localhost:8001/api/exam/${id}/result`,{user_id: Cookies.get("id")}, config);
+            const data= results.data.keys
+            console.log(data)
+            console.log(data.map((e) => {
+                return ['A','B','C','D']. map((ans) => {
+                    if(e.keys.includes(ans)){
+                        return true
+                    }else{
+                        return false
+                    }
+                })
+            }))
+            setKeyList(data.map((e) => {
+                return ['A','B','C','D']. map((ans) => {
+                    if(e.keys.includes(ans)){
+                        return true
+                    }else{
+                        return false
+                    }
+                })
+            }))
         }
         getResult();
         fetchData();
     }, [id]);
+
+    useEffect(()=> {console.log(keyList)}, [keyList])
 
     // const handleOpenDialog = () => {
     //     setOpenDialog(true);
@@ -174,6 +196,7 @@ export default function ResultExamContent(props) {
                             answerList={item.answer_list}
                             keyList={item.key_list}
                             quizQuestion={item.quiz_question}
+                            keyAns = {keyList[index]}
                             // onChangeListAnswer={(idQuestion, listAnswer) => handleCallBackTest(idQuestion, listAnswer)}
                             result={true}
                         />

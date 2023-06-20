@@ -16,7 +16,7 @@ export default function Question(props) {
 
     // Khởi tạo state để lưu trữ trạng thái của các checkbox, ví dụ như [false, false, false]
     const [checkedList, setCheckedList] = useState(
-        !props.result ? Array(arrAnswerList.length).fill(false) : Array(arrAnswerList.length).fill(arrAnswerList)
+        !props.result ? Array(arrAnswerList.length).fill(false) : props.keyAns
     );
 
     // Khởi tạo state để lưu trữ giá trị đáp án được chọn trong RadioGroup, ví dụ như "A"
