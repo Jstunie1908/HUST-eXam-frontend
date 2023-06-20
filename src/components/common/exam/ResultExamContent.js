@@ -120,18 +120,19 @@ export default function ResultExamContent(props) {
             };
             const results = await axios.post(`http://localhost:8001/api/exam/${id}/result`,{user_id: Cookies.get("id")}, config);
             const data= results.data.keys
-            console.log(data)
-            console.log(data.map((e) => {
-                return ['A','B','C','D']. map((ans) => {
-                    if(e.keys.includes(ans)){
-                        return true
-                    }else{
-                        return false
-                    }
-                })
-            }))
+            // console.log(data)
+            // console.log(results)
+            // console.log(data.map((e) => {
+            //     return ['A','B','C','D']. map((ans) => {
+            //         if(e.keys.includes(ans)){
+            //             return true
+            //         }else{
+            //             return false
+            //         }
+            //     })
+            // }))
             setKeyList(data.map((e) => {
-                return ['A','B','C','D']. map((ans) => {
+                return e.answerList.map((ans) => {
                     if(e.keys.includes(ans)){
                         return true
                     }else{
