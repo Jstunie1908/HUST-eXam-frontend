@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Header from "../../components/common/header/Header";
 import { Box, Button, Grid, Paper, TextField, Typography, Select, MenuItem } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 
 
 export default function NewExam() {
+    const navigate = useNavigate();
     const isLogin = (Cookies.get('isLogin') === 'true');
     const id = Cookies.get('id');
     const [titleExam, setTitleExam] = useState("");
@@ -91,6 +92,27 @@ export default function NewExam() {
                 }
             });
             toast.success(response.data.message, { autoClose: 1000 });
+            // Lấy bài thi gần nhất
+            try {
+                const url = `http://localhost:8001/api/exams/${Cookies.get('id')}/latest`;
+                const res = await axios.get(url, {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get('token')}`,
+                    }
+                })
+                console.log(res);
+                const idNewExam = res.data.exams.id;
+                if (state === "public") {
+                    Cookies.set('passwordOfExam', null);
+                }
+                else {
+                    Cookies.set('passwordOfExam', passwordExam);
+                }
+                navigate(`/list_exams/exam/edit/${idNewExam}`);
+
+            } catch (error) {
+                toast.error("An error occurred when go to edit page", { autoClose: 1000 });
+            }
             setTitleExam("");
             setStartTimeConvert("");
             setEndTimeCovert("");
