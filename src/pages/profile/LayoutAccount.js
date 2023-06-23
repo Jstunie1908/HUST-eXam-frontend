@@ -126,7 +126,7 @@ export default function LayoutAccount() {
 
     return (
         <Grid container>
-            <Grid item xs={8} sx={{ borderRight: "2px solid grey" }}>
+            <Grid item xs={8} sx={{}}>
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
                     {/* Tiêu đề */}
                     <Typography variant="h5" gutterBottom>
@@ -136,10 +136,10 @@ export default function LayoutAccount() {
                     <Grid container spacing={2} sx={{ paddingTop: '20px' }}>
                         {/* Email */}
                         <Grid container sx={{ paddingTop: '20px' }}>
-                            <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2}>
+                            <Grid item sx={{ marginRight: '10px', marginLeft: '15px' }} xs={3}>
                                 <Typography><strong>Email</strong></Typography>
                             </Grid>
-                            <Grid item sx={{ paddingRight: '20px' }} xs={5}>
+                            <Grid item sx={{ marginRight: '10px', marginLeft: '15px' }} xs={5} className="flex-basis-width-remain">
                                 <TextField
                                     InputProps={{
                                         startAdornment: (
@@ -157,10 +157,10 @@ export default function LayoutAccount() {
                         </Grid>
                         {/* User name */}
                         <Grid container sx={{ paddingTop: '20px' }}>
-                            <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2}>
+                            <Grid item sx={{ marginRight: '10px', marginLeft: '15px' }} xs={3}>
                                 <Typography><strong>User name</strong></Typography>
                             </Grid>
-                            <Grid item sx={{ paddingRight: '20px' }} xs={5}>
+                            <Grid item sx={{ marginRight: '10px', marginLeft: '15px' }} xs={5} className="flex-basis-width-remain">
                                 <TextField
                                     InputProps={{
                                         startAdornment: (
@@ -261,8 +261,8 @@ export default function LayoutAccount() {
                     </Dialog>
                 </Box>
             </Grid>
-            <Grid item xs={4}>
-                <Box sx={{ display: "flex", flexDirection: "column", paddingLeft: '10px' }}>
+            <Grid item xs={4} className="flex-basis-width-remain margin-top">
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
                     {/* Delete Account */}
                     <Typography variant="h5" gutterBottom>
                         <strong>Delete Account</strong>

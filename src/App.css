@@ -37,3 +37,29 @@
     transform: rotate(360deg);
   }
 }
+
+
+@media screen and (max-width: 1000px) {
+  .d-mobile-none{
+    display:none !important;
+  }
+  .flex-basis-width{
+    flex-basis: 33% !important;
+    max-width: 33% !important;
+  }
+  .flex-basis-width-remain{
+    flex-basis: 67% !important;
+    max-width: 67% !important;
+    margin-right: 50px !important;
+  }
+  .margin-top{
+    margin-top: 30px !important;
+  }
+}
+
+@media screen and (max-width: 650px){
+  .d-mobile-mobile-none{
+    display: none !important;
+  }
+  
+}

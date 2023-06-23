@@ -129,11 +129,11 @@ export default function LayoutProfile() {
             {/* Nội dung */}
             <Grid container spacing={2} sx={{ paddingTop: '20px' }}>
                 {/* Email */}
-                <Grid container sx={{ paddingTop: '20px' }}>
-                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={1}>
+                <Grid container sx={{ paddingTop: '20px', paddingRight: "20px" }}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2} className="flex-basis-width">
                         <Typography><strong>Email</strong></Typography>
                     </Grid>
-                    <Grid item sx={{ paddingRight: '20px' }} xs={3}>
+                    <Grid item sx={{ paddingRight: '20px' }} xs={3} className="flex-basis-width-remain">
                         <TextField
                             InputProps={{
                                 startAdornment: (
@@ -145,16 +145,16 @@ export default function LayoutProfile() {
                             variant="standard"
                             disabled
                             value={email}
-                            sx={{ width: "100%" }}
+                            sx={{ width: "100%", paddingLeft: "15px" }}
                         />
                     </Grid>
                 </Grid>
                 {/* User name */}
                 <Grid container sx={{ paddingTop: '20px' }}>
-                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={1}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2} className="flex-basis-width">
                         <Typography><strong>User name</strong></Typography>
                     </Grid>
-                    <Grid item sx={{ paddingRight: '20px' }} xs={3}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: "15px" }} xs={3} className="flex-basis-width-remain">
                         <TextField
                             InputProps={{
                                 startAdornment: (
@@ -172,10 +172,10 @@ export default function LayoutProfile() {
                 </Grid>
                 {/* Phone */}
                 <Grid container sx={{ paddingTop: '20px' }}>
-                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={1}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2} className="flex-basis-width">
                         <Typography><strong>Phone</strong></Typography>
                     </Grid>
-                    <Grid item sx={{ paddingRight: '20px' }} xs={3}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: "15px" }} xs={3} className="flex-basis-width-remain">
                         <TextField
                             onChange={(event) => { setPhone(event.target.value) }}
                             InputProps={{
@@ -188,7 +188,7 @@ export default function LayoutProfile() {
                             variant="standard"
                             disabled={!openChangePhone}
                             value={phone}
-                            sx={{ width: "100%" }}
+                            sx={{ width: "100%", }}
                         />
                     </Grid>
                     <Grid item sx={{ paddingRight: '20px' }} xs={1}>
@@ -199,10 +199,10 @@ export default function LayoutProfile() {
                 </Grid>
                 {/* Gender */}
                 <Grid container sx={{ paddingTop: '20px' }}>
-                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={1}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2} className="flex-basis-width">
                         <Typography><strong>Gender</strong></Typography>
                     </Grid>
-                    <Grid item sx={{ paddingRight: '20px' }} xs={3}>
+                    <Grid item sx={{ paddingRight: '20px' }} xs={3} className="flex-basis-width-remain">
                         <TextField
                             InputProps={{
                                 startAdornment: (
@@ -214,7 +214,7 @@ export default function LayoutProfile() {
                             variant="standard"
                             disabled
                             value={gender}
-                            sx={{ width: "100%" }}
+                            sx={{ width: "100%", paddingLeft: "15px" }}
                         />
                     </Grid>
                     <Grid item sx={{ paddingRight: '20px' }} xs={1}>
@@ -225,10 +225,10 @@ export default function LayoutProfile() {
                 </Grid>
                 {/* Role */}
                 <Grid container sx={{ paddingTop: '20px' }}>
-                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={1}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2} className="flex-basis-width">
                         <Typography><strong>Role</strong></Typography>
                     </Grid>
-                    <Grid item sx={{ paddingRight: '20px' }} xs={3}>
+                    <Grid item sx={{ paddingRight: '20px',paddingLeft: "15px" }} xs={3} className="flex-basis-width-remain">
                         <TextField
                             InputProps={{
                                 startAdornment: (
@@ -246,10 +246,10 @@ export default function LayoutProfile() {
                 </Grid>
                 {/* Rank */}
                 <Grid container sx={{ paddingTop: '20px' }}>
-                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={1}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2} className="flex-basis-width">
                         <Typography><strong>Rank</strong></Typography>
                     </Grid>
-                    <Grid item sx={{ paddingRight: '20px' }} xs={3}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: "15px" }} xs={3} className="flex-basis-width-remain">
                         <TextField
                             InputProps={{
                                 startAdornment: (
@@ -267,10 +267,10 @@ export default function LayoutProfile() {
                 </Grid>
                 {/* Created At */}
                 <Grid container sx={{ paddingTop: '20px' }}>
-                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={1}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: '15px' }} xs={2} className="flex-basis-width">
                         <Typography><strong>Created at</strong></Typography>
                     </Grid>
-                    <Grid item sx={{ paddingRight: '20px' }} xs={3}>
+                    <Grid item sx={{ paddingRight: '20px', paddingLeft: "15px" }} xs={3} className="flex-basis-width-remain">
                         <TextField
                             InputProps={{
                                 startAdornment: (

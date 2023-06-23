@@ -122,6 +122,7 @@ export default function CardContainer(props) {
           sx={{ width: "290px" }}
           image={props.imgUrl}
           alt="Photo of the exam"
+          className={"d-mobile-none"}
         />
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <CardContent sx={{ flex: "1 0 auto" }}>
@@ -142,6 +143,8 @@ export default function CardContainer(props) {
                 variant="subtitle1"
                 color="text.secondary"
                 component="div"
+                className="d-mobile-mobile-none"
+
               >
                 Start time : {props.startDate}
               </Typography>
@@ -151,6 +154,8 @@ export default function CardContainer(props) {
                 variant="subtitle1"
                 color="text.secondary"
                 component="div"
+                className="d-mobile-mobile-none"
+
               >
                 {/* Ended : {props.endDate} */}
                 Ended : {compareTime(props.endDate) ? <span style={{ color: 'red' }}>{props.endDate}</span> : <span style={{ color: 'green' }}>{props.endDate}</span>}
@@ -161,6 +166,7 @@ export default function CardContainer(props) {
               <Typography
                 variant="subtitle1"
                 color="text.secondary"
+                className="d-mobile-mobile-none"
                 component="div"
               >
                 Time - {props.Time}
