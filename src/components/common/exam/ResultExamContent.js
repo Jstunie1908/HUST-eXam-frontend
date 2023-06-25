@@ -1,22 +1,21 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import Question from "../question/Question";
 import Cookies from "js-cookie";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 export default function ResultExamContent(props) {
     const id = props.id;
-    const timeExam = Cookies.get("timeExam");
+    // const timeExam = Cookies.get("timeExam");
     const [listQuestion, setListQuestion] = useState([]);
     const [keyList, setKeyList] = useState([])
     const [exam, setExam] = useState({});
-    const [listAnswer, setListAnswer] = useState([]);
-    const navigate = useNavigate();
-    const [openDialog, setOpenDialog] = useState(false);
-    const [timeRemaining, setTimeRemaining] = useState(timeExam <= 0 ? 60 : timeExam); // Thời gian còn lại (tính bằng giây)\
-    const [timerID, setTimerID] = useState(null);
+    // const [listAnswer, setListAnswer] = useState([]);
+    // const navigate = useNavigate();
+    // const [openDialog, setOpenDialog] = useState(false);
+    // const [timeRemaining, setTimeRemaining] = useState(timeExam <= 0 ? 60 : timeExam); // Thời gian còn lại (tính bằng giây)\
+    // const [timerID, setTimerID] = useState(null);
     // const [completeTime, setCompleteTime] = useState(null);
 
     // const handleSubmit = useCallback(() => {
@@ -99,7 +98,7 @@ export default function ResultExamContent(props) {
                     },
                 };
                 const response = await axios.post(`http://localhost:8001/api/exam/${id}`, { password: Cookies.get("passwordOfExam") }, config);
-                
+
 
                 const arrExams = response.data.exams;
                 const exam = arrExams[0];
@@ -118,8 +117,8 @@ export default function ResultExamContent(props) {
                     Authorization: `Bearer ${Cookies.get('token')}`,
                 },
             };
-            const results = await axios.post(`http://localhost:8001/api/exam/${id}/result`,{user_id: Cookies.get("id")}, config);
-            const data= results.data.keys
+            const results = await axios.post(`http://localhost:8001/api/exam/${id}/result`, { user_id: Cookies.get("id") }, config);
+            const data = results.data.keys
             // console.log(data)
             // console.log(results)
             // console.log(data.map((e) => {
@@ -133,9 +132,9 @@ export default function ResultExamContent(props) {
             // }))
             setKeyList(data.map((e) => {
                 return e.answerList.map((ans) => {
-                    if(e.keys.includes(ans)){
+                    if (e.keys.includes(ans)) {
                         return true
-                    }else{
+                    } else {
                         return false
                     }
                 })
@@ -145,7 +144,7 @@ export default function ResultExamContent(props) {
         fetchData();
     }, [id]);
 
-    useEffect(()=> {console.log(keyList)}, [keyList])
+    useEffect(() => { console.log(keyList) }, [keyList])
 
     // const handleOpenDialog = () => {
     //     setOpenDialog(true);
@@ -174,11 +173,11 @@ export default function ResultExamContent(props) {
     //     setListAnswer(listAnswerTmp);
     // };
 
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-    };
+    // const formatTime = (seconds) => {
+    //     const mins = Math.floor(seconds / 60);
+    //     const secs = seconds % 60;
+    //     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    // };
 
     return (
         <div>
@@ -197,7 +196,7 @@ export default function ResultExamContent(props) {
                             answerList={item.answer_list}
                             keyList={item.key_list}
                             quizQuestion={item.quiz_question}
-                            keyAns = {keyList[index]}
+                            keyAns={keyList[index]}
                             // onChangeListAnswer={(idQuestion, listAnswer) => handleCallBackTest(idQuestion, listAnswer)}
                             result={true}
                         />
