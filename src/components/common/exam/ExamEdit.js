@@ -92,6 +92,18 @@ export default function ExamEdit(props) {
     }, [id, refresh])
 
     const handleClickUpdate = async () => {
+        if (newTitle === "") {
+            toast.info("Title of exam not empty", { autoClose: 2000 });
+            return;
+        }
+        if (newState === "private" && newPassword === "") {
+            toast.info("Password of exam not empty", { autoClose: 2000 });
+            return;
+        }
+        if (newDuration <= 0) {
+            toast.info("Duration of exam not empty", { autoClose: 2000 });
+            return;
+        }
         try {
             const url = `http://localhost:8001/api/exam/${id}`;
             let dataSendToServer = {}
