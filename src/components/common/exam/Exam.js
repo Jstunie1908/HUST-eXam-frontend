@@ -31,7 +31,7 @@ export default function Exam(props) {
         fetchData();
     }, [id])
 
-    const handleClickStartExam = () => {
+    const handleClickStartExam = async () => {
         const endTime = new Date(exam.end_time);
         const startTime = new Date(exam.start_time);
         const currentTime = new Date();
@@ -43,7 +43,7 @@ export default function Exam(props) {
             toast.info("The participation in this exam has expired", { autoClose: 1500 });
             return;
         }
-        Cookies.set("timeExam", exam.duration);
+        await Cookies.set("timeExam", exam.duration);
         navigate(`/list_exams/exam/start/${id}`);
     }
 

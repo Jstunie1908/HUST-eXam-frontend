@@ -8,13 +8,12 @@ import { useNavigate } from "react-router-dom";
 
 export default function ExamContent(props) {
     const id = props.id;
-    const timeExam = Cookies.get("timeExam");
     const [listQuestion, setListQuestion] = useState([]);
     const [exam, setExam] = useState({});
     const [listAnswer, setListAnswer] = useState([]);
     const navigate = useNavigate();
     const [openDialog, setOpenDialog] = useState(false);
-    const [timeRemaining, setTimeRemaining] = useState(timeExam <= 0 ? 60 : timeExam); // Thời gian còn lại (tính bằng giây)\
+    const [timeRemaining, setTimeRemaining] = useState(Cookies.get("timeExam") ? Cookies.get("timeExam") : 60); // Thời gian còn lại (tính bằng giây)\
     const [timerID, setTimerID] = useState(null);
     // const [completeTime, setCompleteTime] = useState(null);
 
@@ -33,7 +32,7 @@ export default function ExamContent(props) {
                 question_id: answer.question_id,
                 selected_options: answer.selected_option,
             })),
-            complete_time: timeExam - timeRemaining,
+            complete_time: Cookies.get('timeExam') - timeRemaining,
         };
 
         const config = {
@@ -58,7 +57,7 @@ export default function ExamContent(props) {
             console.log(error);
             toast.error(error.response.data.message, { autoClose: 1000 });
         }
-    }, [listAnswer, id, navigate, timerID, timeRemaining, timeExam]);
+    }, [listAnswer, id, navigate, timerID, timeRemaining]);
 
     useEffect(() => {
         const initialTime = localStorage.getItem("initialTime");
