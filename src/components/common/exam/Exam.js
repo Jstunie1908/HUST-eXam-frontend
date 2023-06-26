@@ -5,10 +5,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import TableResult from "./TableResult";
 
 export default function Exam(props) {
     const id = props.id;
     const [exam, setExam] = useState({});
+    const [viewResult, setViewResult] = useState(false);
+    const [rows, setRows] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,6 +32,26 @@ export default function Exam(props) {
             }
         }
         fetchData();
+    }, [id])
+
+    useEffect(() => {
+        async function fetchDataResultExam() {
+            try {
+                const url = `http://localhost:8001/api/exam/results/${id}`;
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${Cookies.get('token')}`,
+                    },
+                };
+                const response = await axios.get(url, config);
+                const results = response.data.results;
+                setRows(results);
+            } catch (error) {
+                toast.error("An error occurred while connecting to the server", { autoClose: 1500 })
+                console.log(error);
+            }
+        }
+        fetchDataResultExam();
     }, [id])
 
     const handleClickStartExam = async () => {
@@ -67,6 +90,10 @@ export default function Exam(props) {
         const second = date.getSeconds().toString().padStart(2, '0');
         const formattedDate = `${day}/${month}/${year} - ${hour}:${minute}:${second}`;
         return formattedDate;
+    }
+
+    const handleClickViewResult = async () => {
+        setViewResult(!viewResult);
     }
 
     return (
@@ -114,11 +141,22 @@ export default function Exam(props) {
                                         Edit the exam
                                     </Button>
                                 </Grid>
+                                <Grid item sx={{ display: `${parseInt(Cookies.get('id')) !== parseInt(exam.author) ? "none" : ""}` }}>
+                                    <Button
+                                        variant="contained"
+                                        className="icon-button"
+                                        onClick={handleClickViewResult}
+                                    >
+                                        View Result
+                                    </Button>
+                                </Grid>
                             </Grid>
                         </Box>
+                        <TableResult rows={rows} display={viewResult} />
                     </Paper>
                 </Grid>
             </Grid>
+
         </div>
     )
 }

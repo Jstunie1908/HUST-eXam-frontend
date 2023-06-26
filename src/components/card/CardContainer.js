@@ -87,22 +87,22 @@ export default function CardContainer(props) {
   const handleClickViewDetail = () => {
     const getResult = async () => {
       const config = {
-          headers: {
-              // Accept: "application/json",
-              // "Content-Type": "application/json;charset=UTF-8",
-              Authorization:`Bearer ${Cookies.get("token")}`,
-          },
+        headers: {
+          // Accept: "application/json",
+          // "Content-Type": "application/json;charset=UTF-8",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
       };
-      const results = await axios.post(`http://localhost:8001/api/exam/${props.idExam}/result`,{user_id: Number(Cookies.get("id"))}, config);
+      const results = await axios.post(`http://localhost:8001/api/exam/${props.idExam}/result`, { user_id: Number(Cookies.get("id")) }, config);
       console.log(results)
       return results
-  }
-    
+    }
+
     getResult().then((res) => {
       navigate(`/result/exam/${props.user_id}/${props.idExam}`)
     }).catch((err) => {
       console.log(err)
-      toast.info( err.response.data.message, { autoClose: 1500 })
+      toast.info(err.response.data.message, { autoClose: 1500 })
       return;
     })
   }
@@ -218,7 +218,7 @@ export default function CardContainer(props) {
 
           </CardContent>
           <CardActions>
-            {(!props.point &&  props.point !== 0) ? (
+            {(!props.point && props.point !== 0) ? (
               <>
                 <Button
                   size="small"
@@ -247,7 +247,7 @@ export default function CardContainer(props) {
         <DialogContent>
           <DialogContent>
             <div>
-              <label htmlFor="enterpassword">Enter password of exam</label>
+              <label htmlFor="enterpassword">Enter password of exam&nbsp;</label>
               <input
                 type="password"
                 title="Enter password of exam"
