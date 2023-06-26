@@ -153,7 +153,7 @@ export default function Home() {
               {/* Hiển thị danh sách các bài thi đã tham gia */}
               <div className="col-7">
                 <Box>
-                  <div className="header font-weight-bold font h2" style={{ color: "black" }}>List of public exams</div>
+                  <div className="header font-weight-bold font h2" style={{ color: "white" }}>List of public exams</div>
                 </Box>
                 <Box>
                   {currentExams.map((card, id) => {

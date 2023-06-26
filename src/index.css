@@ -7,6 +7,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   /* background-color: dodgerblue; */
+  background-image: linear-gradient(to right, #141e30, #243b55);
 }
 
 code {

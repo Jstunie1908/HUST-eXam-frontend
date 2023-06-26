@@ -179,7 +179,7 @@ export default function CardContainer(props) {
                 color="success.main"
                 component="div"
               >
-                Point - {props.point} / 10
+                Point - {props.point}
               </Typography>
               // <div>
               //   Point -{" "}

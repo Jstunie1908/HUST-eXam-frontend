@@ -104,15 +104,15 @@ export default function LayoutResultExams() {
     fetchData().then((res) => {
       const data = res.data.allTests;
       console.log(res.data.allTests)
-      setCard(data.map((e) => {
-        return {
-          id: e.ExamId,
-          name: `Exam id: ${e.ExamId}`,
-          point: e.score,
-          Time: handleTime(e.updatedAt),
-          imgUrl: "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
-          maHp: `IT${e.id}`
-        }
+      setCard(data.filter(e => e.state ==="completed").map((e) => {
+          return {
+            id: e.ExamId,
+            name: `Exam id: ${e.ExamId}`,
+            point: e.score,
+            Time: handleTime(e.updatedAt),
+            imgUrl: "https://img.uxwing.com/wp-content/themes/uxwing/download/education-school/online-exam-icon.svg",
+            maHp: `IT${e.id}`
+          }        
       }))
     })
   }, [])
