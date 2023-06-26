@@ -31,7 +31,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/list_exams/exam/:id" element={<ExamWrapper />} />
           <Route path="/list_exams/exam/start/:id" element={<ExamContentWrapper />} />
-          <Route path="/result/exam/:user_id/:id" element={<ResultExamContentWrapper />} /> 
+          <Route path="/result/exam/:user_id/:id" element={<ResultExamContentWrapper />} />
           {/* <Route path="/exam/edit/:id" element={<EditExam />} /> */}
           {/* <Route path="*" element={(Cookies.get('isLogin') === 'true') ? <Navigate replace to="/home" /> : <Navigate replace to="/" />} /> */}
           <Route path="/list_exams/exam/edit/:id" element={<ExamEditWrapper />} />
@@ -66,7 +66,7 @@ function ExamContentWrapper() {
 }
 
 function ResultExamContentWrapper() {
-  const {id, user_id} = useParams();
+  const { id, user_id } = useParams();
   const isLogin = (Cookies.get('isLogin') === 'true');
   if (!isLogin) {
     return <Navigate replace to="/login" />

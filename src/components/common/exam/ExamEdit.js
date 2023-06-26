@@ -13,8 +13,11 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { MultiInputDateTimeRangeField } from "@mui/x-date-pickers-pro";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import AddImage from "./AddImage";
+import ImageGallery from "./ImageGallery";
 
 export default function ExamEdit(props) {
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const navigate = useNavigate();
     const [refresh, setRefresh] = useState(false);
     const [listQuestion, setListQuestion] = useState([]);
@@ -55,6 +58,37 @@ export default function ExamEdit(props) {
     //     console.log(endTimeConvert && endTimeConvert);
     // })
 
+    //CSS Textarea
+    useEffect(() => {
+        // Hàm xử lý khi kích thước cửa sổ thay đổi
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        // Đăng ký sự kiện khi kích thước cửa sổ thay đổi
+        window.addEventListener('resize', handleResize);
+
+        // Hủy đăng ký sự kiện khi component bị unmount
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    useEffect(() => {
+        const textarea = document.getElementById('titlequestion');
+
+        // Kiểm tra nếu kích thước chiều rộng nhỏ hơn 959px
+        if (windowWidth < 535) {
+            textarea.style.width = '125%';
+        }
+        else if (windowWidth < 959) {
+            textarea.style.width = '250%';
+        } else {
+            textarea.style.width = '500%'; // Width mặc định khi kích thước chiều rộng >= 959px
+        }
+    }, [windowWidth]);
+
+
     useEffect(() => {
         setStartTimeConvert(startTime && dayjs(startTime).format('YYYY/MM/DD HH:mm:ss'));
         setEndTimeCovert(endTime && dayjs(endTime).format('YYYY/MM/DD HH:mm:ss'));
@@ -71,7 +105,7 @@ export default function ExamEdit(props) {
                 });
                 const arrExams = response.data.exams;
                 const exam = arrExams[0];
-                // console.log(exam);
+                console.log(exam);
                 setNewTitle(exam.title);
                 setNewDuration(exam.duration);
                 setNewOpen(exam.is_open)
@@ -288,7 +322,7 @@ export default function ExamEdit(props) {
                 dataSendToServer = {
                     questions: [
                         {
-                            image_link: "none",
+                            image_link: "",
                             quiz_question: titleQuestion,
                             point: scoreQuestion,
                             quiz_type: "true_false",
@@ -309,7 +343,7 @@ export default function ExamEdit(props) {
                 dataSendToServer = {
                     questions: [
                         {
-                            image_link: "none",
+                            image_link: "",
                             quiz_question: titleQuestion,
                             point: scoreQuestion,
                             quiz_type: "multiple_choice",
@@ -421,7 +455,7 @@ export default function ExamEdit(props) {
                     dataSendToServer = {
                         question:
                         {
-                            image_link: "none",
+                            image_link: "",
                             quiz_question: titleQuestionEdit,
                             point: scoreQuestionEdit,
                             quiz_type: "true_false",
@@ -440,7 +474,7 @@ export default function ExamEdit(props) {
                     dataSendToServer = {
                         question:
                         {
-                            image_link: "none",
+                            image_link: "",
                             quiz_question: titleQuestionEdit,
                             point: scoreQuestionEdit,
                             quiz_type: "multiple_choice",
@@ -635,11 +669,15 @@ export default function ExamEdit(props) {
                                         {
                                             listQuestion.map((question) => {
                                                 const answerListArray = JSON.parse(question.answer_list);
-
+                                                const linkImage = question.image_link;
+                                                const arrLinkImage = linkImage.split(",");
+                                                const filteredArr = arrLinkImage.filter(Boolean);
+                                                console.log("fileredArr:", filteredArr);
                                                 return (
                                                     <div key={question.id}>
                                                         <h6 style={{ marginTop: '20px' }}>ID: {question.id}</h6>
                                                         <h5 style={{ marginTop: '20px' }}>{question.quiz_question}</h5>
+                                                        <ImageGallery imageUrls={filteredArr} />
                                                         {
                                                             question.quiz_type === 'multiple_choice' ?
                                                                 (
@@ -738,14 +776,15 @@ export default function ExamEdit(props) {
                                                 width: '500%',
                                                 minHeight: '1em',
                                                 overflow: 'hidden',
-                                                resize: 'none', // Disable mouse resizing 
+                                                resize: 'none',
+                                                marginBottom: '10px',
                                             }}
                                             value={titleQuestion}
                                             onChange={(e) => setTitleQuestion(e.target.value)}
                                             onInput={(event) => {
                                                 const textarea = event.target;
-                                                textarea.style.height = 'auto'; // Reset the height to calculate actual scroll height
-                                                textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
+                                                textarea.style.height = 'auto';
+                                                textarea.style.height = `${textarea.scrollHeight}px`;
                                             }}
                                         ></textarea>
                                     </FormControl>
@@ -919,6 +958,7 @@ export default function ExamEdit(props) {
                                                 textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
                                             }}
                                         ></textarea>
+                                        <AddImage questionID={questionEdit.id} />
                                     </FormControl>
                                 </Grid>
                                 {/* Điền số lượng đáp án */}
