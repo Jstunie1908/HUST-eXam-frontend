@@ -156,9 +156,16 @@ export default function Login() {
             direction="column"
             justifyContent="center"
             style={{ minHeight: "100vh" }}>
-            <Paper elevation={20} sx={{ padding: 4, margin: 5 }}>
+            <Paper
+              elevation={20}
+              sx={{
+                padding: 4,
+                margin: 5,
+                background: "linear-gradient(0deg, rgba(200,188,81,1) 0%, rgba(207,188,77,1) 0%, rgba(215,255,185,1) 0%);"
+              }}
+            >
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 1 }}>
-                <h1 style={{ color: 'dodgerblue' }}> SIGN IN </h1>
+                <h1 style={{ color: 'green' }}> SIGN IN </h1>
               </Box>
               <form>
                 <Grid container spacing={5} direction="column">
@@ -176,7 +183,7 @@ export default function Login() {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <AccountCircle style={{ color: "dodgerblue" }} />
+                            <AccountCircle style={{ color: "green" }} />
                           </InputAdornment>
                         ),
                       }}
@@ -205,7 +212,7 @@ export default function Login() {
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            <KeyIcon style={{ color: "dodgerblue" }} />
+                            <KeyIcon style={{ color: "green" }} />
                           </InputAdornment>
                         ),
                         endAdornment: (
@@ -237,6 +244,8 @@ export default function Login() {
                   <Grid item>
                     <Box sx={{ display: 'flex' }} justifyContent="space-between" alignItems="baseline">
                       <Button
+                        sx={{ backgroundColor: "green" }}
+                        className="icon-button"
                         variant="contained"
                         endIcon={<ArrowForwardIcon />}
                         onClick={handleClickSignIn}
@@ -245,8 +254,9 @@ export default function Login() {
                         Sign In
                       </Button>
                       <Link
+                        className="icon-button"
                         to="/signup"
-                        style={{ textDecoration: 'none' }}
+                        style={{ textDecoration: 'none', color: "green" }}
                         title="Click to sign up">
                         <span className="link-text">Sign up for an account here</span>
                       </Link>

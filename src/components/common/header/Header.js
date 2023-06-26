@@ -71,11 +71,11 @@ function Header(props) {
 
   return (
     <AppBar position="fixed">
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ background: "linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(40, 145, 167, 1) 0%, rgba(37, 191, 59, 0.3926820728291317) 100%);" }}>
         <Toolbar>
           {/* Icon Home */}
           <IconButton onClick={handleClickHomeIcon} size="large" className="icon-button">
-            <HomeIcon sx={{ fontSize: 45 }} />
+            <HomeIcon sx={{ fontSize: 45, color: "green" }} />
           </IconButton>
           {/* Tạo box, box này chứa icon Menu, và các MenuItem sử dụng khi người dùng thu nhỏ màn hình */}
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -131,12 +131,12 @@ function Header(props) {
                   sx={{
                     my: 2,
                     borderRadius: '0px',
-                    color: `${(props.page === page) ? "dodgerblue" : "white"}`,
+                    color: `${(props.page === page) ? "green" : "white"}`,
                     display: "block",
                     textTransform: "none",
                     fontSize: "18px",
                     fontSizeAdjust: "none",
-                    borderLeft: `${(props.page === page) ? "3px solid dodgerblue" : "3px solid white"}`,
+                    borderLeft: `${(props.page === page) ? "3px solid green" : "3px solid white"}`,
                     paddingLeft: '20px',
                     paddingRight: '20px',
                     width: '160px',

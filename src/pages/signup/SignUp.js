@@ -7,7 +7,7 @@ import KeyIcon from '@mui/icons-material/Key';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { toast } from "react-toastify";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import validator from "validator";
 import Cookies from "js-cookie";
 
@@ -152,9 +152,14 @@ export default function SignUp() {
                         direction="column"
                         justifyContent="center"
                         style={{ minHeight: "100vh" }}>
-                        <Paper elevation={20} sx={{ padding: 4, margin: 5 }}>
+                        <Paper elevation={20}
+                            sx={{
+                                padding: 4,
+                                margin: 5,
+                                background: "linear-gradient(0deg, rgba(200,188,81,1) 0%, rgba(207,188,77,1) 0%, rgba(215,255,185,1) 0%);",
+                            }}>
                             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: 1 }}>
-                                <h1 style={{ color: 'dodgerblue' }}> SIGN UP </h1>
+                                <h1 style={{ color: 'green' }}> SIGN UP </h1>
                             </Box>
                             <form>
                                 <Grid container spacing={5} direction="column">
@@ -170,7 +175,7 @@ export default function SignUp() {
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <DriveFileRenameOutlineIcon />
+                                                        <DriveFileRenameOutlineIcon style={{ color: "green" }} />
                                                     </InputAdornment>
                                                 )
                                             }}
@@ -192,7 +197,7 @@ export default function SignUp() {
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <AccountCircle />
+                                                        <AccountCircle style={{ color: "green" }} />
                                                     </InputAdornment>
                                                 )
                                             }}
@@ -214,7 +219,7 @@ export default function SignUp() {
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <KeyIcon />
+                                                        <KeyIcon style={{ color: "green" }} />
                                                     </InputAdornment>
                                                 )
                                             }}
@@ -235,7 +240,7 @@ export default function SignUp() {
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <KeyIcon />
+                                                        <KeyIcon style={{ color: "green" }} />
                                                     </InputAdornment>
                                                 )
                                             }}
@@ -271,7 +276,7 @@ export default function SignUp() {
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <PhoneIcon />
+                                                        <PhoneIcon style={{ color: "green" }} />
                                                     </InputAdornment>
                                                 )
                                             }}
@@ -281,12 +286,26 @@ export default function SignUp() {
                                         />
                                     </Grid>
                                     <Grid item>
-                                        <Button
-                                            variant="contained"
-                                            onClick={handleClickSignUp}
-                                            title="Click to accept sign up">
-                                            Sign Up
-                                        </Button>
+
+                                    </Grid>
+                                    {/* Submit và login page*/}
+                                    <Grid item>
+                                        <Box sx={{ display: 'flex' }} justifyContent="space-between" alignItems="baseline">
+                                            <Button
+                                                variant="contained"
+                                                onClick={handleClickSignUp}
+                                                title="Click to accept sign up"
+                                                sx={{ backgroundColor: "green" }}
+                                            >
+                                                Sign Up
+                                            </Button>
+                                            <Link
+                                                to="/login"
+                                                style={{ textDecoration: 'none', color: "green" }}
+                                                title="Click to login page">
+                                                <span className="link-text">Click to login</span>
+                                            </Link>
+                                        </Box>
                                     </Grid>
                                 </Grid>
                             </form>

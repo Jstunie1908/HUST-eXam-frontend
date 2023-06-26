@@ -7,7 +7,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   /* background-color: dodgerblue; */
-  background-image: linear-gradient(to right, #141e30, #243b55);
+  /* background-image: linear-gradient(to right, #141e30, #243b55); */
+  background: rgb(2, 0, 36);
+  background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(40, 145, 167, 1) 0%, rgba(37, 191, 59, 0.3926820728291317) 100%);
 }
 
 code {

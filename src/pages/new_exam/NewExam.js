@@ -281,6 +281,7 @@ export default function NewExam() {
                                 startIcon={<AddCircleOutlineIcon />}
                                 className="icon-button"
                                 onClick={handleClickCreateExam}
+                                sx={{ backgroundColor: "green" }}
                             >
                                 Create new exam
                             </Button>

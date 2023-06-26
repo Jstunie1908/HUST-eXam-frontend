@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function ExamContent(props) {
     const id = props.id;
+    console.log(Cookies.get("timeExam"));
     const [listQuestion, setListQuestion] = useState([]);
     const [exam, setExam] = useState({});
     const [listAnswer, setListAnswer] = useState([]);

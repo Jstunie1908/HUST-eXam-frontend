@@ -28,6 +28,7 @@ export default function CreateExam() {
                         startIcon={<CreateNewFolderIcon />}
                         className="icon-button"
                         onClick={handledClickCreateExam}
+                        sx={{ backgroundColor: "green" }}
                     >
                         Create a new exam
                     </Button>
