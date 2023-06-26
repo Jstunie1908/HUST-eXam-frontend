@@ -105,7 +105,7 @@ export default function ExamEdit(props) {
                 });
                 const arrExams = response.data.exams;
                 const exam = arrExams[0];
-                console.log(exam);
+                // console.log(exam);
                 setNewTitle(exam.title);
                 setNewDuration(exam.duration);
                 setNewOpen(exam.is_open)
@@ -958,7 +958,7 @@ export default function ExamEdit(props) {
                                                 textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
                                             }}
                                         ></textarea>
-                                        <AddImage questionID={questionEdit.id} />
+                                        <AddImage questionID={questionEdit.id} refresh={refresh} setRefresh={setRefresh} />
                                     </FormControl>
                                 </Grid>
                                 {/* Điền số lượng đáp án */}

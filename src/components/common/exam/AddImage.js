@@ -42,6 +42,7 @@ export default function AddImage(props) {
                 } catch (error) {
                     console.error(error);
                 }
+                props.setRefresh(!props.refresh);
             }
             toast.success("Saved Image", { autoClose: 2000 });
         }
