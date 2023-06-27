@@ -22,6 +22,10 @@ export default function ExamContent(props) {
         handleOpenDialog();
     }, []);
 
+    useEffect(() => {
+        console.log(listQuestion);
+    })
+
     const handleAutoSubmit = useCallback(async () => {
         clearInterval(timerID); // Dừng bộ đếm thời gian
         // Gán giá trị thời gian hoàn thành bài thi
@@ -80,6 +84,7 @@ export default function ExamContent(props) {
             clearInterval(timer);
         };
     }, []);
+
 
     useEffect(() => {
         if (timeRemaining === 0) {
@@ -152,6 +157,7 @@ export default function ExamContent(props) {
                 {listQuestion.map((item, index) => (
                     <div className="mt-3" key={index}>
                         <Question
+                            imageLink={item.image_link}
                             id={item.id}
                             index={index}
                             quizType={item.quiz_type}

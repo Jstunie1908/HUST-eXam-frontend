@@ -1,5 +1,6 @@
 import { Box, Button, Checkbox, FormControl, FormControlLabel, Grid, Radio, RadioGroup } from "@mui/material";
 import React, { useState } from "react";
+import ImageGallery from "../exam/ImageGallery";
 
 export default function Question(props) {
     const id = props.id;
@@ -11,6 +12,9 @@ export default function Question(props) {
     // const arrKeyList = JSON.parse(keyList);
     // const index = props.index;
     const [save, setSave] = useState(false);
+    const linkImage = props.imageLink;
+    const arrLinkImage = linkImage.split(",");
+    const filteredArr = arrLinkImage.filter(Boolean);
 
     // Khởi tạo state để lưu trữ trạng thái của các checkbox, ví dụ như [false, false, false]
     const [checkedList, setCheckedList] = useState(
@@ -91,6 +95,8 @@ export default function Question(props) {
                 <Grid item xs={12} sx={{ paddingLeft: '20px' }}>
                     <strong>{quizQuestion}</strong>
                 </Grid>
+                {/* Hình ảnh */}
+                <ImageGallery imageUrls={filteredArr} />
                 {/* Hiển thị danh sách đáp án */}
                 <Grid container sx={{ paddingTop: '10px' }}>
                     {
@@ -103,7 +109,7 @@ export default function Question(props) {
                                                 <Checkbox
                                                     checked={checkedList[index]}
                                                     onChange={() => handleCheckChange(index)}
-                                                    disabled= {props.result}
+                                                    disabled={props.result}
                                                 />
                                                 {answer}
                                             </Grid>
