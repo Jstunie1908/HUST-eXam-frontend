@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function ExamContent(props) {
     const id = props.id;
-    console.log(Cookies.get("timeExam"));
+    // console.log(Cookies.get("timeExam"));
     const [listQuestion, setListQuestion] = useState([]);
     const [exam, setExam] = useState({});
     const [listAnswer, setListAnswer] = useState([]);
@@ -52,6 +52,7 @@ export default function ExamContent(props) {
             );
             toast.success(response.data.message, { autoClose: 1000 });
             Cookies.remove("timeExam");
+            Cookies.remove("examID");
             localStorage.removeItem("initialTime");
             navigate("/home");
         } catch (error) {

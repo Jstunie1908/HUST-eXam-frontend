@@ -66,8 +66,21 @@ export default function Exam(props) {
             toast.info("The participation in this exam has expired", { autoClose: 1500 });
             return;
         }
-        await Cookies.set("timeExam", exam.duration);
-        navigate(`/list_exams/exam/start/${id}`);
+        if (!Cookies.get("timeExam")) {
+            await Cookies.set("timeExam", exam.duration);
+            await Cookies.set("examID", id);
+            navigate(`/list_exams/exam/start/${id}`);
+        }
+        else {
+            // console.log(id);
+            // console.log(Cookies.get("examID"));
+            if (parseInt(id) !== parseInt(Cookies.get("examID"))) {
+                toast.info(`You are participating in exam with ID ${Cookies.get("examID")}`, { autoClose: 2000 });
+            }
+            else {
+                navigate(`/list_exams/exam/start/${id}`);
+            }
+        }
     }
 
     const handleClickEditExam = () => {

@@ -94,7 +94,7 @@ export default function CardContainer(props) {
         },
       };
       const results = await axios.post(`http://localhost:8001/api/exam/${props.idExam}/result`, { user_id: Number(Cookies.get("id")) }, config);
-      console.log(results)
+      // console.log(results)
       return results
     }
 

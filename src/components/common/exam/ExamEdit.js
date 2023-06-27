@@ -171,7 +171,7 @@ export default function ExamEdit(props) {
                 }
             }
             const response = await axios.put(url, dataSendToServer, config);
-            console.log(response);
+            // console.log(response);
             if (response.data.code === 0) {
                 toast.success("Update Succesfully", { autoClose: 2000 });
                 const passwordNewOfExam = (newState === "public") ? null : newPassword;
@@ -197,7 +197,7 @@ export default function ExamEdit(props) {
                     }
                 }
                 const response = await axios.delete(url, config);
-                console.log(response);
+                // console.log(response);
                 if (response.data.code === 0) {
                     toast.success(response.data.message, { autoClose: 2000 });
                     navigate('/list_exams');
@@ -444,14 +444,14 @@ export default function ExamEdit(props) {
             const listAnswerEdit = [...Array(numberAnswerEdit)].map((_, index) =>
                 document.getElementById(`answer-option-${index + 1}-edit`).value
             );
-            console.log("listAnswerEdit:", listAnswerEdit)
+            // console.log("listAnswerEdit:", listAnswerEdit)
             // Gửi dữ liệu đến server
             try {
                 let dataSendToServer = {}
                 if (typeQuestionEdit === "Singular choice") {
                     const selectedTextFieldValueEdit = selectedAnswerEdit ? document.getElementById(`answer-option-${selectedAnswerEdit.split('-')[1]}-edit`).value : '';
                     const keyListEdit = [selectedTextFieldValueEdit];
-                    console.log(keyListEdit);
+                    // console.log(keyListEdit);
                     dataSendToServer = {
                         question:
                         {
@@ -463,14 +463,14 @@ export default function ExamEdit(props) {
                             key_list: keyListEdit,
                         }
                     }
-                    console.log(dataSendToServer);
+                    // console.log(dataSendToServer);
                 }
                 else {
                     const selectedTextFieldsEdit = selectedCheckboxesEdit.map((checkboxIndex) =>
                         document.getElementById(`answer-option-${checkboxIndex + 1}-edit`).value
                     );
                     const keyListEdit = [...selectedTextFieldsEdit];
-                    console.log(keyListEdit);
+                    // console.log(keyListEdit);
                     dataSendToServer = {
                         question:
                         {
@@ -482,10 +482,10 @@ export default function ExamEdit(props) {
                             key_list: keyListEdit,
                         }
                     }
-                    console.log(dataSendToServer);
+                    // console.log(dataSendToServer);
                 }
                 const url = `http://localhost:8001/api/exam/${id}/questions/${questionEdit.id}`;
-                console.log("url:", url);
+                // console.log("url:", url);
                 const config = {
                     headers: {
                         'Accept': 'application/json',
@@ -498,7 +498,7 @@ export default function ExamEdit(props) {
                     dataSendToServer,
                     config
                 );
-                console.log(response);
+                // console.log(response);
                 if (response.data.code === 0) {
                     toast.success(response.data.message, { autoClose: 1500 });
                     // Reset
@@ -672,7 +672,7 @@ export default function ExamEdit(props) {
                                                 const linkImage = question.image_link;
                                                 const arrLinkImage = linkImage.split(",");
                                                 const filteredArr = arrLinkImage.filter(Boolean);
-                                                console.log("fileredArr:", filteredArr);
+                                                // console.log("fileredArr:", filteredArr);
                                                 return (
                                                     <div key={question.id}>
                                                         <h6 style={{ marginTop: '20px' }}>ID: {question.id}</h6>
